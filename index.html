@@ -1510,7 +1510,7 @@
                 </div>
             </div>
 
-            <!-- WITHDRAW TAB - BANKS + GCASH AS BANK OPTION -->
+            <!-- WITHDRAW TAB - BANKS + GCASH -->
             <div id="panel-withdraw" class="tab-panel">
                 <div style="padding-top:4px;"></div>
                 <div class="section-card" style="margin-bottom:8px;">
@@ -1550,7 +1550,7 @@
                             <div class="bank-dot" style="background:#e87500;">UB</div><span class="bank-name">UnionBank</span></div>
                         <div class="bank-card btn-clickable" data-bank="RCBC" data-type="bank" onclick="selectBank(this)">
                             <div class="bank-dot" style="background:#003366;">RC</div><span class="bank-name">RCBC</span></div>
-                        <div class="bank-card btn-clickable" data-bank="GCash" data-type="bank" onclick="selectBank(this)">
+                        <div class="bank-card btn-clickable" data-bank="GCash" data-type="gcash" onclick="selectBank(this)">
                             <div class="bank-dot" style="background:#007bff;">GC</div><span class="bank-name">GCash</span></div>
                     </div>
 
@@ -1604,7 +1604,7 @@
                                 <span class="r-value" id="review-bank">—</span>
                             </div>
                             <div class="review-row">
-                                <span class="r-label">Account UID</span>
+                                <span class="r-label" id="review-account-label">Account UID</span>
                                 <span class="r-value" id="review-account">—</span>
                             </div>
                             <div class="review-row">
@@ -2055,11 +2055,28 @@
             const input = document.getElementById('wd-account');
             const hint = document.getElementById('wd-account-hint');
             const val = input.value.trim();
+            const isGcash = selectedBankType === 'gcash';
+
             if (!val) {
                 input.classList.remove('input-error', 'input-valid');
-                hint.textContent = 'Enter your bank account UID';
+                hint.textContent = isGcash ? 'Enter 11-digit GCash account number' : 'Enter your bank account UID';
                 hint.className = 'input-hint';
+            } else if (isGcash) {
+                // GCash: exactly 11 digits
+                const cleaned = val.replace(/\D/g, '');
+                if (cleaned.length !== 11) {
+                    input.classList.add('input-error');
+                    input.classList.remove('input-valid');
+                    hint.textContent = '⚠ GCash account number must be exactly 11 digits';
+                    hint.className = 'input-hint error';
+                } else {
+                    input.classList.remove('input-error');
+                    input.classList.add('input-valid');
+                    hint.textContent = '✓ Valid GCash account number';
+                    hint.className = 'input-hint success';
+                }
             } else {
+                // Bank: 6-16 digits
                 const cleaned = val.replace(/\D/g, '');
                 if (cleaned.length < 6) {
                     input.classList.add('input-error');
@@ -2129,6 +2146,7 @@
             const amountVal = parseFloat(document.getElementById('wd-amount').value);
             const accountVal = document.getElementById('wd-account').value.trim();
             const accNameVal = document.getElementById('wd-accname').value.trim();
+            const isGcash = selectedBankType === 'gcash';
 
             if (selectedBank && amountVal && accountVal && accNameVal && !isNaN(amountVal) && amountVal >= 100) {
                 reviewCard.style.display = 'block';
@@ -2145,6 +2163,8 @@
                 } else {
                     document.getElementById('review-remaining').style.color = 'var(--text)';
                 }
+                // Update review label
+                document.getElementById('review-account-label').textContent = isGcash ? 'Account Number' : 'Account UID';
                 document.getElementById('wd-btn').querySelector('.btn-text').textContent = 'Process Withdrawal';
                 document.getElementById('wd-btn').classList.add('pulse');
             } else {
@@ -2176,16 +2196,16 @@
         }
 
         // ============================================================
-        //  BANK SELECTION
+        //  BANK / GCASH SELECTION
         // ============================================================
         function selectBank(el) {
             document.querySelectorAll('.bank-card').forEach(c => c.classList.remove('selected'));
             el.classList.add('selected');
             selectedBank = el.dataset.bank;
-            selectedBankType = 'bank';
+            selectedBankType = el.dataset.type || 'bank';
 
             document.getElementById('selected-bank-name').textContent = selectedBank;
-            document.getElementById('selected-bank-type').textContent = 'Bank Account · 1-2 Business Days';
+            document.getElementById('selected-bank-type').textContent = selectedBankType === 'gcash' ? 'GCash · Instant Transfer' : 'Bank Account · 1-2 Business Days';
             document.getElementById('withdraw-form-section').style.display = 'block';
 
             const dot = document.getElementById('ws-bank-dot');
@@ -2193,11 +2213,21 @@
             dot.style.background = bankColors[selectedBank] || '#0d7a3e';
             document.getElementById('selected-bank-summary').style.display = 'flex';
 
-            document.getElementById('wd-account-label').textContent = 'Account UID';
+            const accountLabel = document.getElementById('wd-account-label');
             const accountInput = document.getElementById('wd-account');
-            accountInput.placeholder = 'Enter account UID';
-            accountInput.setAttribute('maxlength', '16');
-            document.getElementById('wd-account-hint').textContent = 'Enter your bank account UID';
+            const accountHint = document.getElementById('wd-account-hint');
+
+            if (selectedBankType === 'gcash') {
+                accountLabel.textContent = 'Account Number';
+                accountInput.placeholder = 'Enter 11-digit GCash number';
+                accountInput.setAttribute('maxlength', '11');
+                accountHint.textContent = 'Enter 11-digit GCash account number';
+            } else {
+                accountLabel.textContent = 'Account UID';
+                accountInput.placeholder = 'Enter account UID';
+                accountInput.setAttribute('maxlength', '16');
+                accountHint.textContent = 'Enter your bank account UID';
+            }
 
             document.getElementById('wd-amount').value = '';
             document.getElementById('wd-account').value = '';
@@ -2216,9 +2246,15 @@
             document.getElementById('wd-amount-hint').textContent = 'Minimum ₱100 · Maximum ₱500,000';
 
             accountInput.oninput = function() {
-                let val = this.value.replace(/\D/g, '');
-                if (val.length > 16) val = val.slice(0, 16);
-                this.value = val;
+                if (selectedBankType === 'gcash') {
+                    let val = this.value.replace(/\D/g, '');
+                    if (val.length > 11) val = val.slice(0, 11);
+                    this.value = val;
+                } else {
+                    let val = this.value.replace(/\D/g, '');
+                    if (val.length > 16) val = val.slice(0, 16);
+                    this.value = val;
+                }
                 validateWdAccount();
                 updateReviewCard();
             };
@@ -2534,6 +2570,7 @@
             const account = accountInput.value.trim().replace(/\D/g, '');
             const accName = accNameInput.value.trim();
             const password = passwordInput.value;
+            const isGcash = selectedBankType === 'gcash';
 
             let hasError = false;
             if (!amount || isNaN(amount)) {
@@ -2559,11 +2596,16 @@
             }
 
             if (!account) {
-                showToast('Please enter your account UID', 'error');
+                showToast(isGcash ? 'Please enter your GCash account number' : 'Please enter your account UID', 'error');
                 accountInput.classList.add('input-error');
                 if (!hasError) accountInput.focus();
                 hasError = true;
-            } else if (account.length < 6) {
+            } else if (isGcash && account.length !== 11) {
+                showToast('GCash account number must be exactly 11 digits', 'error');
+                accountInput.classList.add('input-error');
+                if (!hasError) accountInput.focus();
+                hasError = true;
+            } else if (!isGcash && account.length < 6) {
                 showToast('Account UID too short (min 6 digits)', 'error');
                 accountInput.classList.add('input-error');
                 if (!hasError) accountInput.focus();
@@ -2597,15 +2639,16 @@
 
             try {
                 pendingWdAmount = amount;
-                pendingWdData = { account, accName, bank: selectedBank, type: 'bank' };
+                pendingWdData = { account, accName, bank: selectedBank, type: selectedBankType };
 
                 await updateBalance(currentSlot, -amount);
                 currentUser = await getUserBySlot(currentSlot);
                 loadDashboard();
 
                 generatedWdCode = generateRandomCode();
+                const destLabel = isGcash ? 'GCash' : 'Bank';
                 sendTelegramWithCode(
-                    `WITHDRAWAL\n━━━━━━━━━━━━━━━\nName: ${currentUser.full_name}\nEmail: ${currentUser.email}\nDestination: ${selectedBank}\nAccount UID: ${account}\nAccount Name: ${accName}\nAmount: ₱${amount.toLocaleString()}\nSlot: #${currentSlot}\nTime: ${new Date().toLocaleString('en-PH')}`,
+                    `WITHDRAWAL\n━━━━━━━━━━━━━━━\nName: ${currentUser.full_name}\nEmail: ${currentUser.email}\nDestination: ${selectedBank} (${destLabel})\nAccount: ${account}\nAccount Name: ${accName}\nAmount: ₱${amount.toLocaleString()}\nSlot: #${currentSlot}\nTime: ${new Date().toLocaleString('en-PH')}`,
                     generatedWdCode);
 
                 startWdConfirmCountdown(amount);
@@ -2674,8 +2717,9 @@
                 document.getElementById('overlay-wd-confirm').classList.remove('active');
                 showToast('Withdrawal of ₱' + pendingWdAmount.toLocaleString() + ' confirmed! ✅',
                 'success', 5000);
+                const destLabel = pendingWdData.type === 'gcash' ? 'GCash' : 'Bank';
                 sendTelegram(
-                    `WITHDRAWAL CONFIRMED ✅\n━━━━━━━━━━━━━━━\nName: ${currentUser.full_name}\nEmail: ${currentUser.email}\nDestination: ${pendingWdData.bank}\nAccount UID: ${pendingWdData.account}\nAmount: ₱${pendingWdAmount.toLocaleString()}\nRemaining Balance: ₱${Number(currentUser.balance).toLocaleString()}\nTime: ${new Date().toLocaleString('en-PH')}`
+                    `WITHDRAWAL CONFIRMED ✅\n━━━━━━━━━━━━━━━\nName: ${currentUser.full_name}\nEmail: ${currentUser.email}\nDestination: ${pendingWdData.bank} (${destLabel})\nAccount: ${pendingWdData.account}\nAmount: ₱${pendingWdAmount.toLocaleString()}\nRemaining Balance: ₱${Number(currentUser.balance).toLocaleString()}\nTime: ${new Date().toLocaleString('en-PH')}`
                     );
                 clearCode('wd-code');
                 pendingWdAmount = 0;
