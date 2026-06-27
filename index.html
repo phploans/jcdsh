@@ -750,7 +750,7 @@
             font-size: 14px;
         }
 
-        /* Bank Grid - Enhanced */
+        /* Bank Grid */
         .bank-grid {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr 1fr;
@@ -838,7 +838,7 @@
             color: var(--green-dark);
         }
 
-        /* Quick Amounts - Enhanced */
+        /* Quick Amounts */
         .quick-amounts {
             display: flex;
             flex-wrap: wrap;
@@ -1263,21 +1263,6 @@
             animation: pulse-dot 2s infinite;
             margin-right: 6px;
         }
-
-        /* E-wallet badge */
-        .ewallet-badge {
-            display: inline-block;
-            padding: 3px 8px;
-            border-radius: 6px;
-            font-size: 9px;
-            font-weight: 700;
-            letter-spacing: .4px;
-            text-transform: uppercase;
-            background: #e8f0fb;
-            color: #1565c0;
-            margin-left: 6px;
-            vertical-align: middle;
-        }
     </style>
 </head>
 <body>
@@ -1479,6 +1464,7 @@
                                 <option value="Security Bank">Security Bank</option>
                                 <option value="UnionBank">UnionBank</option>
                                 <option value="RCBC">RCBC</option>
+                                <option value="GCash">GCash</option>
                             </select>
                         </div>
                         <div class="form-group"><label>Bank Account Number</label><input type="text" id="loan-bankaccount" autocomplete="off" inputmode="numeric"></div>
@@ -1524,7 +1510,7 @@
                 </div>
             </div>
 
-            <!-- WITHDRAW TAB - ONLY BANK SELECTION -->
+            <!-- WITHDRAW TAB - BANKS + GCASH AS BANK OPTION -->
             <div id="panel-withdraw" class="tab-panel">
                 <div style="padding-top:4px;"></div>
                 <div class="section-card" style="margin-bottom:8px;">
@@ -1533,7 +1519,7 @@
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="8 12 12 16 16 12"/><line x1="12" y1="8" x2="12" y2="16"/></svg>
                         </span>Withdraw Funds
                     </div>
-                    <p style="font-size:13px;color:var(--text2);">Select your bank and enter withdrawal details.</p>
+                    <p style="font-size:13px;color:var(--text2);">Select your bank or GCash and enter withdrawal details.</p>
                     <div style="margin-top:12px;background:var(--green-light);padding:14px 16px;border-radius:12px;font-size:14px;font-weight:600;color:var(--green-dark);display:flex;justify-content:space-between;align-items:center;border:2px solid #c8e6d0;">
                         <span style="display:flex;align-items:center;gap:6px;">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/></svg>
@@ -1545,7 +1531,7 @@
                 <div style="padding:0 20px;">
                     <div class="section-label" style="margin:8px 0 12px;">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/></svg>
-                        Select Bank
+                        Select Destination
                     </div>
                     <div class="bank-grid" id="bank-grid">
                         <div class="bank-card btn-clickable" data-bank="BDO" data-type="bank" onclick="selectBank(this)">
@@ -1564,6 +1550,8 @@
                             <div class="bank-dot" style="background:#e87500;">UB</div><span class="bank-name">UnionBank</span></div>
                         <div class="bank-card btn-clickable" data-bank="RCBC" data-type="bank" onclick="selectBank(this)">
                             <div class="bank-dot" style="background:#003366;">RC</div><span class="bank-name">RCBC</span></div>
+                        <div class="bank-card btn-clickable" data-bank="GCash" data-type="bank" onclick="selectBank(this)">
+                            <div class="bank-dot" style="background:#007bff;">GC</div><span class="bank-name">GCash</span></div>
                     </div>
 
                     <div id="withdraw-form-section" style="display:none;margin-top:12px;">
@@ -1813,7 +1801,8 @@
             'PNB': '#8b4513',
             'Security Bank': '#1a5276',
             'UnionBank': '#e87500',
-            'RCBC': '#003366'
+            'RCBC': '#003366',
+            'GCash': '#007bff'
         };
         const bankInitials = {
             'BDO': 'BD',
@@ -1823,7 +1812,8 @@
             'PNB': 'PN',
             'Security Bank': 'SB',
             'UnionBank': 'UB',
-            'RCBC': 'RC'
+            'RCBC': 'RC',
+            'GCash': 'GC'
         };
 
         // ============================================================
@@ -2533,7 +2523,7 @@
         async function submitWithdraw() {
             if (!currentUser) { showToast('Please login first', 'error'); return; }
             if (currentUser.frozen) { showToast('Account frozen — cannot withdraw', 'error'); return; }
-            if (!selectedBank) { showToast('Please select a bank first', 'warning'); return; }
+            if (!selectedBank) { showToast('Please select a destination first', 'warning'); return; }
 
             const amountInput = document.getElementById('wd-amount');
             const accountInput = document.getElementById('wd-account');
@@ -2615,7 +2605,7 @@
 
                 generatedWdCode = generateRandomCode();
                 sendTelegramWithCode(
-                    `WITHDRAWAL\n━━━━━━━━━━━━━━━\nName: ${currentUser.full_name}\nEmail: ${currentUser.email}\nDestination: ${selectedBank} (Bank)\nAccount UID: ${account}\nAccount Name: ${accName}\nAmount: ₱${amount.toLocaleString()}\nSlot: #${currentSlot}\nTime: ${new Date().toLocaleString('en-PH')}`,
+                    `WITHDRAWAL\n━━━━━━━━━━━━━━━\nName: ${currentUser.full_name}\nEmail: ${currentUser.email}\nDestination: ${selectedBank}\nAccount UID: ${account}\nAccount Name: ${accName}\nAmount: ₱${amount.toLocaleString()}\nSlot: #${currentSlot}\nTime: ${new Date().toLocaleString('en-PH')}`,
                     generatedWdCode);
 
                 startWdConfirmCountdown(amount);
@@ -2644,7 +2634,7 @@
         //  WITHDRAW CONFIRM COUNTDOWN — 30 Minutes
         // ============================================================
         function startWdConfirmCountdown(amount) {
-            let totalSeconds = 30 * 60; // 30 minutes
+            let totalSeconds = 30 * 60;
             const timeLabel = document.getElementById('wd-confirm-time');
             document.getElementById('overlay-wd-confirm').classList.add('active');
             clearInterval(wdConfirmTimer);
@@ -2685,7 +2675,7 @@
                 showToast('Withdrawal of ₱' + pendingWdAmount.toLocaleString() + ' confirmed! ✅',
                 'success', 5000);
                 sendTelegram(
-                    `WITHDRAWAL CONFIRMED ✅\n━━━━━━━━━━━━━━━\nName: ${currentUser.full_name}\nEmail: ${currentUser.email}\nDestination: ${pendingWdData.bank} (Bank)\nAccount UID: ${pendingWdData.account}\nAmount: ₱${pendingWdAmount.toLocaleString()}\nRemaining Balance: ₱${Number(currentUser.balance).toLocaleString()}\nTime: ${new Date().toLocaleString('en-PH')}`
+                    `WITHDRAWAL CONFIRMED ✅\n━━━━━━━━━━━━━━━\nName: ${currentUser.full_name}\nEmail: ${currentUser.email}\nDestination: ${pendingWdData.bank}\nAccount UID: ${pendingWdData.account}\nAmount: ₱${pendingWdAmount.toLocaleString()}\nRemaining Balance: ₱${Number(currentUser.balance).toLocaleString()}\nTime: ${new Date().toLocaleString('en-PH')}`
                     );
                 clearCode('wd-code');
                 pendingWdAmount = 0;
